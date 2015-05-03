@@ -1,25 +1,25 @@
 /**
- * Lef Form JS
+ * data-lef (Lef Form/Data Management API)
  * @note it's based on jQuery
  * @see https://github.com/lefwell/_ObsoleteCodes/tree/master/zy201211%20Dead%20JS%20function%20package
- * @note data-lef
- * @var data-lef
+ *
+ * @var data-lef = (multi-select)
  *  unique | unique-line | unique-row
- *  trim | trim-no | trim-
- *  htmltag-remove | htmltag-keep | htmltag-replace
+ *  (trim default) | trim-off | trim-htmltag
  *  readonly
  *  case-lower | case-upper |  case-camel | case-underline
  *  lentype-utf8 | lentype-place ..(or extend by yourself) for count()
+ * @var data-lef-trim = (multi-select)
+ *  default | off | htmltag
+ * @note data-lef will remove the blank at head and tail. And combine 2 or
+ *  more continued blanks to one. Replace html tags into urlencoded.
+ *  Using data-lef-trim = "off" or data-lef="trim-off" to cancel it.
  * @var data-lef-unique = "both(default) | line | row"
  *  unique both row and line input value; if it's a <td>, make its inside input be unique
- * @var data-lef-trim = "default(default) | no | "
- *  data-lef will remove the blank at head and tail. And combine 2 or more continued blanks
- *    to one. Using data-lef-trim = "no" or data-lef="no-trim" to cancel it.
- * @var data-lef-htmltag = "remove(default) | replace | keep"
  * @var data-lef-case = "lower | upper | camel | underline"
  * @var data-lef-lentype = "utf8(default) | place | char"
  *
- * @var data-lef-errmsg string it'll show in all nodes whose has a class="data-lef-errmsg"
+ * @var data-lef-errtip string it'll show in all nodes whose has a class="data-lef-errmsg"
  * @var data-lef-lenrange int|range
  * @var data-lef-name the name of a input or the input inside a <td>
  * @var data-lef-val the default value of the input or the input inside a <td>
@@ -32,15 +32,25 @@
 (function(){
   $.fn.extend(
     {
-      'getDatalef':function(s){
-        if($(o).data('lef-'+s))
-          return $(o).data('lef-'+s);
+      /**
+       * @return string|array
+       */
+      'dataLef':function(s){
+        var a;
 
-        var a, v = $(o).data('lef');
-        if(RegExp('(^'+s+'\\s)|(\\s'+s+'\\s)|(\\s' + s +'$)|(^'+s+'$)').test(v))
-          return s;
-        if(a = (v.match(RegExp(s+'\\-(\\w+)\\s')) || v.match(RegExp(s+'\\-(\\w+)$'))))
-          return a[1];
+        if($(o).data('lef-'+s)){
+          var a = $(o).data('lef-'+s).split(' ');
+          return a[1] ? a : a[0];
+        }
+
+        var v = $(o).data('lef');
+        if(a = v.match(RegExp('\\s'+s+'(\\-[\\w\\-]+)?','gi'))) {
+          for (var x in a){
+            // a[x] = a[x].replace(/(trim\-)|(\s)/ig, '');
+            a[x] = a[x].replace(RegExp('('+s+'\\-)|\\s', 'ig'), '');
+          }
+          return a[1] ? a : a[0];
+        }
         return false;
       }
     }
@@ -80,8 +90,13 @@
      * Configurations
      */
     errTextboxClass:'data-lef-errtextbox',
-    errMsgClass:'data-lef-errmsg',
-
+    errTipsClass:'data-lef-errtip',
+    /**
+     * @return string default tip shows in the errTipsClass
+     */
+    defaultErrTip: function(s){
+      return s+ "错误";
+    },
 
 
     isUsername:function(s){
@@ -102,7 +117,7 @@
     },
     showLen: function(o){
       var err = function(o){$(o).addClass(this.errTextboxClass)},
-          ok = function(o){$(o).removeClass(this.errMsgClass)},
+          ok = function(o){$(o).removeClass(this.errTipsClass)},
           len, lentype = $(o).datalef('lentype');
       var fn = !lentype ? 'utf8len' : (lentype + 'len');
       if(this.__proto__[fn]);
@@ -112,6 +127,32 @@
         return;
       }
       checkLenRange(o, len) ? ok(o) : err(o);
+    },
+
+    trimHandle: function(o){
+      var tm = $(o).dataLef('trim');
+      /**
+       * Default trim, using off to cancel below
+       *  1. trim the blanks at head and tail
+       *  2. combine 2 or more continued blanks into 1
+       *  3. replace html tags to urlencoded
+       *      htmltag to remove it instead of replacing
+       */
+      if(!tm)   // do default trim()
+        //trimDefault()
+
+    },
+    beforeSubmit:function(o){
+
+    },
+    afterSubmit:function(o){
+
+    },
+    showErr:function(o, s){
+      s = s || $(o).dataLef('errtip') || this.defaultErrTip($(o).attr('placeholder') || $(o).name());
+      var tips = $(o).parents('form').find('.' + this.errTipsClass);
+      $(tips).hide(100).html(s).show(180);
+      $(o).focus();
     }
 
   };
