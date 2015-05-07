@@ -247,13 +247,41 @@
       }
       return '</select>';
     },
+    /**
+     * Modify a line of data
+     * @arg jQuery-Object tr
+     */
+    beforeModify:function(tr){
+      $(tr).find('td').each(function(i, td){
+        var input = '<input type="text"';
+        input += 'value="';
+        input += $(td).dataLef('name') ? $(td).dataLef('name') : $(td).html()
+        input += '"';
+
+        if($(td).dataLef('readonly'))
+          input += 'readonly="readonly"';
+        if($(td).dataLef('name'))
+          input += 'name="'+ $(td).dataLef('name') +'"';
+
+        input += '>';
+        $(td).html(input);
+      });
+    },
+
+    afterModify:function(tr){
+      $(tr).find('td').each(function(i, td){
+        $(td).html($(td).children().val());
+      });
+    },
     init:function(){
 
     }
 
   };
-  window.dataLef = new f();
+
   $(document).ready(function(){
+    if(typeof(window.dataLef) == 'function')
+      window.dataLef = new f();
     dataLef.init();
   });
 });
