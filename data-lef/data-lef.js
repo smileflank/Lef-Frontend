@@ -9,8 +9,10 @@
  *  readonly
  *  case-lower | case-upper |  case-camel | case-underline
  *  lentype-utf8 | lentype-place ..(or extend by yourself) for count()
+ *  notnull | lenrange (make this.value not null) | lenrange-1-5
  * @var data-lef-trim = (multi-select)
- *  default | off | htmltag
+ *  default | off | htmltag | prune
+ * @var data-lef-regexp =
  * @note data-lef will remove the blank at head and tail. And combine 2 or
  *  more continued blanks to one. Replace html tags into urlencoded.
  *  Using data-lef-trim = "off" or data-lef="trim-off" to cancel it.
@@ -30,16 +32,32 @@
  *  <td data-lef="" data-lef-name="id" data-lef-val="Data-Lef" data-lef-unique="row"></td>
  */
 (function(){
+
+  function exist(arr, val){
+    if(typeof(arr) == 'string')
+      return arr == val;
+    if(arr.constructor == 'Array'){
+      for(var i in arr) {
+        if (val == arr[i])
+          return arr;
+      }
+    }
+    console.log("data-lef.js exist(arr, val) arr type error")
+    return false;
+  }
   $.fn.extend(
     {
       /**
-       * @return string|array
+       * Get|Check dataLef
+       * @arg string flg = false optional
+       * @return string|array|bool
        */
-      'dataLef':function(s){
+      'dataLef':function(s, flg){
         var a;
-
         if($(o).data('lef-'+s)){
           var a = $(o).data('lef-'+s).split(' ');
+          if(flg)
+            return exist(a, flg)
           return a[1] ? a : a[0];
         }
 
@@ -49,6 +67,8 @@
             // a[x] = a[x].replace(/(trim\-)|(\s)/ig, '');
             a[x] = a[x].replace(RegExp('('+s+'\\-)|\\s', 'ig'), '');
           }
+          if(flg)
+            return exist(a, flg)
           return a[1] ? a : a[0];
         }
         return false;
@@ -82,7 +102,7 @@
         else l += 4;
       }
       return l;
-    },
+    }
   };
 
   f.prototype = {
@@ -97,6 +117,26 @@
     defaultErrTip: function(s){
       return s+ "错误";
     },
+    htmlTags: [
+      ['—', '&#8212;'],
+      ['\'', '&#39;'],
+      ['\"', '&quot;'],
+      ['<', '&lt;'],
+      ['>', '&gt;'],
+      ['\\\\', '&#92;']
+    ],
+    data:{
+      toArray:function(){
+        return JSON.parse(data);
+      },
+      toData:function(){
+        return JSON.stringify(arr);
+      }
+    },
+
+    dataLefSelector:'dataLefSelector',
+
+
 
 
     isUsername:function(s){
@@ -120,7 +160,7 @@
           ok = function(o){$(o).removeClass(this.errTipsClass)},
           len, lentype = $(o).datalef('lentype');
       var fn = !lentype ? 'utf8len' : (lentype + 'len');
-      if(this.__proto__[fn]);
+      if(this.__proto__[fn])
         len = this[fn]($(o).val());
       else{
         console.log('dataLef.__proto__.'+ fn +'() is undefined...');
@@ -130,6 +170,7 @@
     },
 
     trimHandle: function(o){
+      var s = $(o).val();
       var tm = $(o).dataLef('trim');
       /**
        * Default trim, using off to cancel below
@@ -138,9 +179,20 @@
        *  3. replace html tags to urlencoded
        *      htmltag to remove it instead of replacing
        */
-      if(!tm)   // do default trim()
-        //trimDefault()
-
+      if(!tm){   // do default trim()
+        s = s.replace(/^[\s　]+|[\s　]+$/g, '');
+        s = s.replace(/\s+/g, ' ');
+        for(var x in this.htmlTags){
+          s = s.replace(RegExp(this.htmlTags[x][0], 'g'), this.htmlTags[x][1]);
+        }
+      }
+      if($(o).dataLef('trim', 'prune')){
+        s = s.replace(/[，,]+/g, ',');
+        s = s.replace(/([\s\-\+\.,])+/g, '$1');
+        s = s.replace(/^[,\s\-\+\.]+|[,\s\-\+\.]+$/g, '');
+        s = s.replace(/[^\u4E00-\u9FA5\w,\-\+\s\.]/g, '');
+      }
+      $(o).val(s);
     },
     beforeSubmit:function(o){
 
@@ -153,6 +205,50 @@
       var tips = $(o).parents('form').find('.' + this.errTipsClass);
       $(tips).hide(100).html(s).show(180);
       $(o).focus();
+    },
+    /**
+     * @var flags
+     *  ""  show <option></option>
+     *  string selected key name
+     * @example
+     * {
+     *  vita:{
+     *    "dataLefSelector":{"dataLef":"notnull"},
+     *    "name":{"selected":"Lef"},
+     *    "age":99,
+     *  }
+     * }
+     *    <select name = "vita" data-lef="notnull">
+     *      <option></option>
+     *      <option value="name" selected="selected">Lef</option>
+     *      <option value="age">99</option>
+     *    </select>
+     */
+    toSelector:function(select_name, arr){
+      var html = '<select name="'+ select_name+'"';
+      var info = arr[this.dataLefSelector];
+      if(info){
+        if(info.dataLef)
+          html += 'data-lef="'+ info.dataLef +'"';
+        arr[this.dataLefSelector] = null;
+      }
+      html += '>';
+
+      for(var i in arr){
+        if(arr[i]){
+          html += '<option value="' + i + '"';
+          if(arr[i].selected)
+            html += ' selected="selected">' + arr[i].selected;
+          else
+            html += '>' + arr[i];
+          html += '</option>';
+        }
+
+      }
+      return '</select>';
+    },
+    init:function(){
+
     }
 
   };
