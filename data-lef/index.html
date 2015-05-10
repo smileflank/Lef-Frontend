@@ -9,11 +9,14 @@
 </head>
 <body>
 <div class="w">
-  <div style="padding:40px;height:100px">
+  <div style="padding:40px;height:100px;display: none">
     <ul><li><a href="index-cn.html">data-lef 轻量级数据库及表单管理样例（中文案例）</a></li>
     </ul>
   </div>
-
+  <div style="height:50px;font:700 30px/50px Arial;margin:20px 0" class="fo">data-lef has not been finished yet...</div>
+  <div>
+<div class="p">
+  <h1>Use I. HTML Form Management</h1>
   <form>
     <div class="data-lef-errtip"></div>
     <div>
@@ -30,14 +33,50 @@
       <em></em>
     </div>
     <div>
-      <input type="submit" vaLue="submit提交按钮">
-      <input type="button" value="button按钮" data-lef="submit">
-      <img src="http://tp4.sinaimg.cn/5541292063/180/5722156560/1" data-lef-submit="mouseover" data-lef-erros>
+      <p><em>there're 3 ways to submit with below buttons:</em></p>
+      <p>1. click the submit </p>
+      <p>2. click the button </p>
+      <p>1. mouseover the image Lef-Well </p>
+      <input type="submit" vaLue="submit">
+      <input type="button" value="button to submit" data-lef="submit">
+      <img src="https://avatars1.githubusercontent.com/u/8835297?v=3&s=100" data-lef-submit="mouseover" data-lef-errshow="off" alt="mouseover img to submit">
     </div>
 
 
-    用户名字数：<em class="username_len"></em>
+    Count Username Here：<em class="username_len"></em>
   </form>
+</div>
+  <div class="q">
+    <h1>Use II. Light SQL Management</h1>
+    <p>
+      Please double click a line to modify it to SQL (not finish yet)
+    </p>
+      <table>
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Full Name</th>
+          <th>User Name</th>
+          <th>Gender</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td data-lef="unique-row" data-lef-name="id" data-lef-regexp="\d">1000</td>
+          <td data-lef-name="name" data-lef-lenrange="2-99">Lef Well</td>
+          <td data-lef="" data-lef-name="user" data-lef-lenrange="6-14">LefWell</td>
+          <td data-lef="" data-lef-name="sex">Male</td>
+        </tr>
+        <tr>
+          <td data-lef="unique-row" data-lef-name="id" data-lef-regexp="\d">999</td>
+          <td data-lef-name="name" data-lef-lenrange="2-99">VW</td>
+          <td data-lef="" data-lef-name="user" data-lef-lenrange="6-14">VinceWell</td>
+          <td data-lef="" data-lef-name="sex">Male</td>
+        </tr>
+        </tbody>
+      </table>
+  </div>
+  </div>
 </div>
 </body>
 </html>

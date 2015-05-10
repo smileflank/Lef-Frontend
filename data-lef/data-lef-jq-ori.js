@@ -265,7 +265,7 @@
     showErr:function(o, s){
       var errshow =  $(o).dataLef('errshow');
       s = s || $(o).dataLef('errtip') || lef.defaultErrTip($(o).attr('placeholder') || $(o).name());
-      if(errshow == 'off')
+      if(!lef.errShowHandle || errshow == 'off')
         return;
       if(!errshow){
         if($(o).parents('form').find(lef.errTipsClass).length < 1)
