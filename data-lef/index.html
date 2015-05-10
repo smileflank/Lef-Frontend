@@ -18,7 +18,10 @@
 <div class="p">
   <h1>Use I. HTML Form Management</h1>
   <form>
-    <div class="data-lef-errtip"></div>
+    <!--<div class="data-lef-errtip"></div>-->
+    <div>
+      <input type="text" name="age" placeholder="Age" data-lef="" data-lef-regexp="\d">
+    </div>
     <div>
       <input type="text" name="name" placeholder="Full Name" data-lef="showlen" data-lef-errtip="Can't you even spell you name?" data-lef-lenrange="2-99">
       <em>* Please input your name</em>
@@ -27,13 +30,13 @@
       <input type="text" name="user" data-lef="" data-lef-showlen=".username_len" data-lef-lenrange="6-14" placeholder="Username">
       <em>* Please input 6 to 14 chars</em>
     </div>
-    <div><input type="password" data-lef="" placeholder="Password"></div>
+    <div><input type="password" name="password" data-lef="" placeholder="Password"></div>
     <div>
-      <textarea data-lef="showlen"></textarea>
+      <textarea data-lef="showlen" name="text"></textarea>
       <em></em>
     </div>
     <div>
-      <p><em>there're 3 ways to submit with below buttons:</em></p>
+      <p><em>there're 3 ways to submit with buttons below:</em></p>
       <p>1. click the submit </p>
       <p>2. click the button </p>
       <p>1. mouseover the image Lef-Well </p>
@@ -42,14 +45,16 @@
       <img src="https://avatars1.githubusercontent.com/u/8835297?v=3&s=100" data-lef-submit="mouseover" data-lef-errshow="off" alt="mouseover img to submit">
     </div>
 
-
     Count Username Here：<em class="username_len"></em>
   </form>
 </div>
   <div class="q">
     <h1>Use II. Light SQL Management</h1>
     <p>
-      Please double click a line to modify it to SQL (not finish yet)
+      Please double click a line of data to modify it to SQL (not finish yet)
+    </p>
+    <p>
+      You should create the data with SQL script (such as PHP/JSP and so on)
     </p>
       <table>
         <thead>

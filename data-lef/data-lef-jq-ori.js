@@ -48,7 +48,9 @@
  * @var data-lef-name the name of a input or the input inside a <td>
  *
  * @var data-lef-blur
-
+ *
+ * @var data-lef-len
+ * @var data-lef-temporary
  */
 (function(){
   var lef;
@@ -69,6 +71,13 @@
   }
   $.fn.extend(
     {
+      //'textval':function(v){
+      //  var u = typeof(v) == 'undefined';
+      //    if($(this).is('input') || $(this).is('textarea'))
+      //      return u ? $(this).val() : $(this).val(v);
+      //    else
+      //      return u ? $(this).html() : $(this).html(v);
+      //},
       /**
        * Get|Check dataLef
        * @arg string flg = false optional
@@ -76,9 +85,8 @@
        */
       'dataLef':function(s, flg){
         var a;
-        if($(this).data('lef-'+s)){
-          a = $(this).data('lef-'+s)
-          if(['errtip'].has(s))
+        if(a = $(this).data('lef-'+s)){
+          if(['errtip', 'len', 'temporary'].has(s))
             return $(this).data('lef-'+s);
           a = a.split(' ');
           if(flg)
@@ -179,37 +187,84 @@
       return l;
     },
 
-
-    checkLenRange:function(o, l){
-      var range = $(o).dataLef('lenrange');
-      if(range){      // int|range
-        var e = range.toString().split('-'),
-            i = function(n){return parseInt(n)};
-        return e[1] ? (l >= i(e[0]) && l<=i(e[1])) : (l<i(e[1]));
-      }
-      return true;
+    hasErr:function(o){
+      return $(o).hasClass(lef.errTextBoxClass.word()) ? true : (!lef.regexpCheck(o));
+    },
+    setErr:function(o){
+      $(o).addClass(lef.errTextBoxClass.word())
+    },
+    liftErr:function(o){
+      $(o).removeClass(lef.errTextBoxClass.word())
+    },
+    errHandle:function(o){
+      lef.lenrangeHandle(o);
+      lef.hasErr(o) ? lef.setErr(o) : lef.liftErr(o);
     },
 
-    showLen: function(o){
-      var err = function(o){$(o).addClass(lef.errTextBoxClass.word())},
-          ok = function(o){$(o).removeClass(lef.errTextBoxClass.word())},
-          len, lentype = $(o).dataLef('lentype');
+    showErr:function(o, s){
+      var errshow =  $(o).dataLef('errshow');
+      s = s || $(o).dataLef('errtip') || lef.defaultErrTip($(o).attr('placeholder') || $(o).name());
+      if(!lef.errShowHandle || errshow == 'off')
+        return;
+      if(!errshow){
+        if($(o).parents('form').find(lef.errTipsClass).length < 1)
+          $(o).parents('form').prepend('<p class="'+ lef.errTipsClass +'" data-lef="temporary">'+ s +'</p>');
+        errshow = $(o).parents('form').find(lef.errTipsClass);
+      }
+
+      if($(errshow).html() && !$(o).dataLef('temporary')){
+
+      }
+
+
+      $(errshow).hide(100).html(s).show(180);
+      $(o).focus();
+    },
+
+
+
+
+
+    regexpCheck:function(o){
+      var reg = $(o).dataLef('regexp');
+        return reg ? RegExp(reg).test($(o).value) : true;
+    },
+    /**
+     * It changes always, so it should combined handle actions with check
+     */
+    lenrangeHandle:function(o){
+      var len, rtn, lentype = $(o).dataLef('lentype');
       var fn = !lentype ? 'utf8len' : (lentype + 'len');
       if(lef.__proto__[fn])
         len = lef[fn]($(o).val());
       else{
         console.log('dataLef.__proto__.'+ fn +'() is undefined...');
-        return;
+        return false;
       }
-      var show_len;
-      //console.log($(o).dataLef('showlen'))
-      if(show_len = $(o).dataLef('showlen')){
+      $(o).data('lef-len', len);
+
+      var show_len = $(o).dataLef('showlen');
+      // lef.lenrangeCheck(o);
+      if(show_len && len >0){
         if(show_len == 'showlen')
           show_len = $(o).parent().find('em');
-        $(show_len).html(len);
+        $(show_len).html($(o).dataLef('len'));
       }
-      lef.checkLenRange(o, len) ? ok(o) : err(o);
+
+
+      var range = $(o).dataLef('lenrange');
+      if(range){      // int|range
+        var e = range.toString().split('-'),
+          i = function(n){return parseInt(n)};
+        return e[1] ? (len >= i(e[0]) && len<=i(e[1])) : (len<i(e[1]));
+      }
+
+
+
+      return true;
     },
+
+
 
     trim: function(o){
       var s = $(o).val();
@@ -238,49 +293,8 @@
       }
       $(o).val(s);
     },
-    beforeSubmit:function(o, e){
-      var r = true;  // 用于返回，让提交按钮后面代码停止执行
-
-      lef.errShowHandle = $(o).dataLef('errshow') == 'off' ? false : true;      // reset back to true is necessary
 
 
-      $(o).parents('form').find(lef.errTipsClass).hide(180);
-      $(o).parents('form').find('input[type!=submit], select, textarea').each(function (i, textbox) {
-        if($(textbox).dataLef('submit'))
-          return true;    // continue to next loop
-        lef.trim($(textbox));
-        lef.showLen($(textbox));
-        if($(textbox).hasClass(lef.errTextBoxClass.word())){
-          e && e.preventDefault();//此处阻止提交表单
-          lef.showErr($(textbox));
-          r=false;
-          return r; // break each input/select/textarea
-        }
-      });
-      return r;
-    },
-    afterSubmit:function(o){
-
-    },
-    showErr:function(o, s){
-      var errshow =  $(o).dataLef('errshow');
-      s = s || $(o).dataLef('errtip') || lef.defaultErrTip($(o).attr('placeholder') || $(o).name());
-      if(!lef.errShowHandle || errshow == 'off')
-        return;
-      if(!errshow){
-        if($(o).parents('form').find(lef.errTipsClass).length < 1)
-          $(o).parents('form').prepend('<p class="'+ lef.errTipsClass +'" data-lef="temporary">'+ s +'</p>');
-        errshow = $(o).parents('form').find(lef.errTipsClass);
-      }
-
-      if($(errshow).html() && !$(o).dataLef('temporary')){
-
-      }
-
-
-      $(errshow).hide(100).html(s).show(180);
-      $(o).focus();
-    },
     /**
      * @var flags
      *  ""  show <option></option>
@@ -348,22 +362,48 @@
         $(td).html($(td).children().val());
       });
     },
+
+
+    beforeSubmit:function(o, e){
+      var r = true;  // 用于返回，让提交按钮后面代码停止执行
+
+      lef.errShowHandle = $(o).dataLef('errshow') == 'off' ? false : true;      // reset back to true is necessary
+
+
+      $(o).parents('form').find(lef.errTipsClass).hide(180);
+      $(o).parents('form').find('input[type!=submit], select, textarea').each(function (i, textbox) {
+        if($(textbox).dataLef('submit'))
+          return true;    // continue to next loop
+        lef.trim($(textbox));
+        lef.errHandle($(textbox));
+        if(lef.hasErr($(textbox))){
+          e && e.preventDefault();// prevent submit
+          lef.showErr($(textbox));
+          r=false;
+          return r; // break each input/select/textarea
+        }
+      });
+      return r;
+    },
+    afterSubmit:function(o){
+
+    },
     init:function(data_lef){
       lef = data_lef;
       console.log('Not Finish Yet...');
       var nodes = 'input:text, input:password, textarea';
       $(nodes).bind('input propertychange', function () {
-        lef.showLen($(this));
+        lef.errHandle(this);
       });
 
 
       $(nodes).blur(function () {
         lef.trim(this);
-        lef.showLen(this);
+        lef.errHandle(this);
       });
 
-      $('input:submit').click(function (e) {
-        lef.beforeSubmit($(this), e);
+      $('form').submit(function (e) {
+        lef.beforeSubmit(this, e);
       });
 
       $('body *').each(function(){
@@ -373,7 +413,7 @@
             method = 'click';
           $(this).bind(method,function(e){
             //console.log(method)
-            lef.beforeSubmit($(this), e)
+            lef.beforeSubmit(this, e)
           });
         }
       });
@@ -381,9 +421,10 @@
 
   };
 
+  //if(typeof(window.dataLef) != 'function')
+    window.dataLef = new f();
   $(document).ready(function(){
-    if(typeof(window.dataLef) != 'function')
-      window.dataLef = new f();
+
     dataLef.init(window.dataLef);
   });
 })();
