@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>data-lef 表格管理案例</title>
+  <link href="../asserts/lef.css" type="text/css" rel="stylesheet">
+  <script src="../asserts/jquery-2.1.3.js"></script>
+  <script src="data-lef-jq-ori.js"></script>
+</head>
+<body>
+<div class="w">
+
+  <form>
+  <div class="data-lef-errtip"></div>
+    <div><input type="text" name="name" placeholder="姓名" data-lef="showlen" data-lef-errtip="姓名只能是中文"><em></em></div>
+    <div>
+      <input type="text" name="user" data-lef="lentype-place" data-lef-showlen=".username_len" data-lef-lenrange="6-14" placeholder="用户名">
+      * 请保持用户名 6-14个字符，每个中文字符占两个字符
+    </div>
+    <div><input type="password" data-lef="" placeholder="密码"></div>
+    <div>
+      <textarea data-lef="showlen"></textarea>
+      <em></em>
+    </div>
+    <div>
+      <input type="submit" vaLue="submit提交按钮">
+      <input type="button" value="button按钮" data-lef="submit">
+      <img src="http://tp4.sinaimg.cn/5541292063/180/5722156560/1" data-lef-submit="mouseover" data-lef-erros>
+    </div>
+
+
+    用户名字数：<em class="username_len"></em>
+  </form>
+</div>
+</body>
+</html>

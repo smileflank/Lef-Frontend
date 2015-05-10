@@ -29,6 +29,7 @@
  *  lentype-utf8 | lentype-place ..(or extend by yourself) for count()
  *  notnull | lenrange (make this.value not null) | lenrange-1-5
  *  showlen-
+ *  submit (submit-click) | submit-mouseover | submit-dbclick ...
  * @var data-lef-trim = (multi-select)
  *  default | off | htmltag | prune
  * @var data-lef-regexp =
@@ -40,27 +41,28 @@
  * @var data-lef-case = "lower | upper | camel | underline"
  * @var data-lef-lentype = "utf8(default) | place | char"
  * @var data-lef-showlen = ""
- * @var data-lef-errtip string it'll show in all nodes whose has a class="data-lef-errmsg"
+ * @var data-lef-errtip string it'll show in all nodes whose has a class="data-lef-errtip"
+ * @var data-lef-errshow class/id where to show the errtip, default is lef.errTipsClass:'.data-lef-errtip'
+ *                        off is cancel
  * @var data-lef-lenrange int|range
  * @var data-lef-name the name of a input or the input inside a <td>
- * @var data-lef-val the default value of the input or the input inside a <td>
  *
  * @var data-lef-blur
 
  */
 (function(){
- var lef;
-  function exist(arr, val){
-    if(typeof(arr) == 'string')
-      return arr == val;
-    if(arr.constructor == 'Array'){
-      for(var i in arr) {
-        if (val == arr[i])
-          return arr;
-      }
+  var lef;
+
+  Array.prototype.has = function(val){  // replace to $.inArray() if you like
+    // for (var in) will list the prototypes of Array
+    for(var i = 0; i<this.length; ++i) {
+      if (val == this[i])
+        return this;
     }
-    console.log("data-lef.js exist(arr, val) arr type error")
     return false;
+  }
+  String.prototype.has = function(val){
+    return this == val;
   }
   String.prototype.word = function(){
     return this.replace(/[^\w\-]/g,'');
@@ -75,23 +77,24 @@
       'dataLef':function(s, flg){
         var a;
         if($(this).data('lef-'+s)){
-          var a = $(this).data('lef-'+s).split(' ');
+          a = $(this).data('lef-'+s)
+          if(['errtip'].has(s))
+            return $(this).data('lef-'+s);
+          a = a.split(' ');
           if(flg)
-            return exist(a, flg)
+            return a.has(flg)
           return a[1] ? a : a[0];
         }
 
-
-        var v = $(this).data('lef');
-        v = ' ' + v;
+        var v = ' ' + $(this).data('lef');
 
         if(v != ' ' && (a = v.match(RegExp('\\s'+s+'(\\-[^\\s]+)?','gi')))) {
-          for (var x in a){
-            // a[x] = a[x].replace(/(trim\-)|(\s)/ig, '');
+          // for (var in) will list the prototypes of Array
+          for (var x=0; x<a.length; ++x){
             a[x] = a[x].replace(RegExp('('+s+'\\-)|\\s', 'ig'), '');
           }
           if(flg)
-            return exist(a, flg)
+            return a.has(flg);
           return a[1] ? a : a[0];
         }
         return false;
@@ -139,7 +142,7 @@
     dataLefSelector:'dataLefSelector',
 
 
-
+    errShowHandle:true,
 
     isUsername:function(s){
       return /^[a-zA-Z\u4e00-\u9fa5][\u4e00-\u9fa5\w\-]+[a-zA-Z\u4e00-\u9fa5]$/.test(s);
@@ -178,13 +181,15 @@
 
 
     checkLenRange:function(o, l){
-      var range;
-      if(range = $(o).dataLef('lenrange')){      // int|range
+      var range = $(o).dataLef('lenrange');
+      if(range){      // int|range
         var e = range.toString().split('-'),
             i = function(n){return parseInt(n)};
         return e[1] ? (l >= i(e[0]) && l<=i(e[1])) : (l<i(e[1]));
       }
+      return true;
     },
+
     showLen: function(o){
       var err = function(o){$(o).addClass(lef.errTextBoxClass.word())},
           ok = function(o){$(o).removeClass(lef.errTextBoxClass.word())},
@@ -197,7 +202,7 @@
         return;
       }
       var show_len;
-      console.log($(o).dataLef('showlen'))
+      //console.log($(o).dataLef('showlen'))
       if(show_len = $(o).dataLef('showlen')){
         if(show_len == 'showlen')
           show_len = $(o).parent().find('em');
@@ -208,6 +213,8 @@
 
     trim: function(o){
       var s = $(o).val();
+      //if(!s)
+       // return;
       var tm = $(o).dataLef('trim');
       /**
        * Default trim, using off to cancel below
@@ -219,8 +226,8 @@
       if(!tm){   // do default trim()
         s = s.replace(/^[\s　]+|[\s　]+$/g, '');
         s = s.replace(/\s+/g, ' ');
-        for(var x in this.htmlTags){
-          s = s.replace(RegExp(this.htmlTags[x][0], 'g'), this.htmlTags[x][1]);
+        for(var x=0; x<lef.htmlTags.length; ++x){
+          s = s.replace(RegExp(lef.htmlTags[x][0], 'g'), lef.htmlTags[x][1]);
         }
       }
       if($(o).dataLef('trim', 'prune')){
@@ -233,14 +240,19 @@
     },
     beforeSubmit:function(o, e){
       var r = true;  // 用于返回，让提交按钮后面代码停止执行
-      $(o).parents('form').find(this.errTipsClass).hide(180);
-      $(o).parents('form').find('input, select, textarea').each(function () {
 
-        lef.trim(this);
-        lef.showLen(this);
-        if($(o).hasClass(lef.errTextBoxClass)){
+      lef.errShowHandle = $(o).dataLef('errshow') == 'off' ? false : true;      // reset back to true is necessary
+
+
+      $(o).parents('form').find(lef.errTipsClass).hide(180);
+      $(o).parents('form').find('input[type!=submit], select, textarea').each(function (i, textbox) {
+        if($(textbox).dataLef('submit'))
+          return true;    // continue to next loop
+        lef.trim($(textbox));
+        lef.showLen($(textbox));
+        if($(textbox).hasClass(lef.errTextBoxClass.word())){
           e && e.preventDefault();//此处阻止提交表单
-          lef.showErr(this);
+          lef.showErr($(textbox));
           r=false;
           return r; // break each input/select/textarea
         }
@@ -251,9 +263,22 @@
 
     },
     showErr:function(o, s){
-      s = s || $(o).dataLef('errtip') || this.defaultErrTip($(o).attr('placeholder') || $(o).name());
-      var tips = $(o).parents('form').find(this.errTipsClass);
-      $(tips).hide(100).html(s).show(180);
+      var errshow =  $(o).dataLef('errshow');
+      s = s || $(o).dataLef('errtip') || lef.defaultErrTip($(o).attr('placeholder') || $(o).name());
+      if(errshow == 'off')
+        return;
+      if(!errshow){
+        if($(o).parents('form').find(lef.errTipsClass).length < 1)
+          $(o).parents('form').prepend('<p class="'+ lef.errTipsClass +'" data-lef="temporary">'+ s +'</p>');
+        errshow = $(o).parents('form').find(lef.errTipsClass);
+      }
+
+      if($(errshow).html() && !$(o).dataLef('temporary')){
+
+      }
+
+
+      $(errshow).hide(100).html(s).show(180);
       $(o).focus();
     },
     /**
@@ -339,6 +364,18 @@
 
       $('input:submit').click(function (e) {
         lef.beforeSubmit($(this), e);
+      });
+
+      $('body *').each(function(){
+        var method;
+        if(method = $(this).dataLef('submit')){
+          if(method == 'submit')
+            method = 'click';
+          $(this).bind(method,function(e){
+            //console.log(method)
+            lef.beforeSubmit($(this), e)
+          });
+        }
       });
     }
 

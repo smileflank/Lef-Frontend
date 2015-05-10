@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>data-lef Data/Form Mangement Demo</title>
+  <link href="../asserts/lef.css" type="text/css" rel="stylesheet">
+  <script src="../asserts/jquery-2.1.3.js"></script>
+  <script src="data-lef-jq-ori.js"></script>
+</head>
+<body>
+<div class="w">
+  <div style="padding:40px;height:100px">
+    <ul><li><a href="index-cn.html">data-lef 轻量级数据库及表单管理样例（中文案例）</a></li>
+    </ul>
+  </div>
+
+  <form>
+    <div class="data-lef-errtip"></div>
+    <div>
+      <input type="text" name="name" placeholder="Full Name" data-lef="showlen" data-lef-errtip="Can't you even spell you name?" data-lef-lenrange="2-99">
+      <em>* Please input your name</em>
+    </div>
+    <div>
+      <input type="text" name="user" data-lef="" data-lef-showlen=".username_len" data-lef-lenrange="6-14" placeholder="Username">
+      <em>* Please input 6 to 14 chars</em>
+    </div>
+    <div><input type="password" data-lef="" placeholder="Password"></div>
+    <div>
+      <textarea data-lef="showlen"></textarea>
+      <em></em>
+    </div>
+    <div>
+      <input type="submit" vaLue="submit提交按钮">
+      <input type="button" value="button按钮" data-lef="submit">
+      <img src="http://tp4.sinaimg.cn/5541292063/180/5722156560/1" data-lef-submit="mouseover" data-lef-erros>
+    </div>
+
+
+    用户名字数：<em class="username_len"></em>
+  </form>
+</div>
+</body>
+</html>
