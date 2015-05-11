@@ -234,13 +234,18 @@
       nodes.forEach(function(name){
         if(($.inArray(name, once) < 0) && $('input[name='+name+']').length == 1){
           $('input[name='+name+']').bind('input propertychange', function(e){
-            cc2 = cc;
-            nodes.forEach(function(n) {
-              if($('input[name='+n+']').length == 1){
-                cc2 = cc2.replace(RegExp(n, 'g'), $('input[name='+n+']').val());
-              }
-            });
-            $(o).val(eval(cc2.replace(RegExp(name, 'g'), $(this).val())));
+            var err = false;
+              cc2 = cc;
+              nodes.forEach(function(n) {
+                if($('input[name='+n+']').length == 1){
+                  if(lef.hasErr($('input[name='+n+']')))
+                    err = true;
+                  cc2 = cc2.replace(RegExp(n, 'g'), $('input[name='+n+']').val());
+                }
+              });
+            if(!err && !lef.hasErr($(this)))
+              $(o).val(eval(cc2.replace(RegExp(name, 'g'), $(this).val())));
+
           });
           once.push(name);
         }
