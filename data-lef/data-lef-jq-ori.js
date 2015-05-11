@@ -30,9 +30,14 @@
  *  notnull | lenrange (make this.value not null) | lenrange-1-5
  *  showlen-
  *  submit (submit-click) | submit-mouseover | submit-dbclick ...
+ *  type (type-string) | type-number | type-number.2
+ *  calc-
  * @var data-lef-trim = (multi-select)
  *  default | off | htmltag | prune
- * @var data-lef-regexp =
+ * @var data-lef-regexp regexp has the highest priority
+ *  note
+ *    to express \d, you should write data-lef-regexp="\\d" or data-lef-regexp="@d"
+ *    to express @, you should write data-lef-regexp="\\@"
  * @note data-lef will remove the blank at head and tail. And combine 2 or
  *  more continued blanks to one. Replace html tags into urlencoded.
  *  Using data-lef-trim = "off" or data-lef="trim-off" to cancel it.
@@ -42,9 +47,19 @@
  * @var data-lef-lentype = "utf8(default) | place | char"
  * @var data-lef-showlen = ""
  * @var data-lef-errtip string it'll show in all nodes whose has a class="data-lef-errtip"
- * @var data-lef-errshow class/id where to show the errtip, default is lef.errTipsClass:'.data-lef-errtip'
- *                        off is cancel
+ * @var data-lef-errshow class/id where to show the errtip,
+ *  default is lef.errTipsClass:'.data-lef-errtip' off is cancel
  * @var data-lef-lenrange int|range
+ * @var data-lef-type string|number|number.dec
+ *  On cal, if the value nodes has a type, use it; else use the result's type
+ *  to express a int
+ *    data-lef-regexp="\\d+" or data-lef-regexp="\\d{1,4}" or data-lef-type="number"
+ *  to express a number with 2 decimal numbers
+ *    data-lef-regexp="\\d+\\.\\d{2}" or data-lef-type="number.2"
+ * @var data-lef-cal  calculate
+ *  example
+ *    data-lef-cal="(textboxa + textboxb) / 100" data-lef-type="number.2"
+ *    data-lef-cal="({#textboxa} {#cal} {#textboxb}) / 100"
  * @var data-lef-name the name of a input or the input inside a <td>
  *
  * @var data-lef-blur
@@ -62,6 +77,15 @@
         return this;
     }
     return false;
+  }
+  Array.prototype.forOnce = function(fn, i){
+    var a_prevent = [];
+    for(var i=0; i<this.length; ++i){
+      if(a_prevent.has(this[i]))
+        continue;
+      fn(this[i]);
+      a_prevent.push(this[i]);
+    }
   }
   String.prototype.has = function(val){
     return this == val;
@@ -85,9 +109,24 @@
        */
       'dataLef':function(s, flg){
         var a;
-        if(a = $(this).data('lef-'+s)){
-          if(['errtip', 'len', 'temporary'].has(s))
-            return $(this).data('lef-'+s);
+        if(a = $(this).data('lef-'+s)) {
+          if (['errtip', 'len', 'temporary'].has(s))
+            return a;
+          if ('regexp'.has(s)) {
+            var reg_arr = a.replace(/\\+/g, '\\').split('\\');
+            var new_a = reg_arr[0];
+            a =  a.match(/\\+/g);
+            for(var i=0; i < a.length; ++i){
+              if(a[i].length % 2){
+                new_a += a[i].length > 1 ? '\\{' + (a[i].length-1) +'}\\' : '\\';
+              } else {
+                new_a += '\\{' + a[i].length + '}'
+              }
+              new_a += reg_arr[i+1];
+            }
+            new_a = ' ' + new_a; // for regexp below
+            return new_a.replace(/[^\\]@[a-z]/g, '\\');
+          }
           a = a.split(' ');
           if(flg)
             return a.has(flg)
@@ -161,6 +200,45 @@
     isPhone: function (s) {
       return /^\d+$/.test(s);
     },
+
+    regexpCheck:function(o){
+      var reg = $(o).dataLef('regexp');
+      return reg ? RegExp(reg).test($(o).value) : true;
+    },
+
+    /**
+     * regexp --> data-lef-type  -- data-lef="type-"
+     * @return int -1 on no; 0 on int; >0 on the max decimal number, esp. 99 on unknown
+     */
+    isTypeNumber: function(o){
+      var reg = $(o).dataLef('regexp');
+      if(reg){
+        if(reg = reg.match(/^\\d[\+\{\d,\}]*(\\.\\d[\+\{\d,\}]*)?$/)){
+          if(!reg[1])
+            return 0;
+
+        }
+
+      }
+
+
+    },
+    toType: function(o, reserve){
+
+    },
+    cal:function(o){
+      var cal = $(o).dataLef('cal');
+      if(cal){
+        cal.match(/\{\#[\w\-]+\}/g).forOnce(function(name){
+          if($('input[name='+name+']').length == 1){
+            $('input[name='+name+']').bind('propertychange', function(e){
+
+            });
+            
+          }
+        });
+      }
+    },
     /**
      * @return int the placeholder length. a Chinese char's placelen is 2.
      */
@@ -188,7 +266,11 @@
     },
 
     hasErr:function(o){
-      return $(o).hasClass(lef.errTextBoxClass.word()) ? true : (!lef.regexpCheck(o));
+      var no_err;
+      // first doing
+      no_err = lef.lenrangeHandle(o) && lef.regexpCheck(o);
+      //no_err = no_err && lef.regexpCheck(o);
+      return !no_err;
     },
     setErr:function(o){
       $(o).addClass(lef.errTextBoxClass.word())
@@ -197,7 +279,7 @@
       $(o).removeClass(lef.errTextBoxClass.word())
     },
     errHandle:function(o){
-      lef.lenrangeHandle(o);
+      console.log(lef.lenrangeHandle(o));
       lef.hasErr(o) ? lef.setErr(o) : lef.liftErr(o);
     },
 
@@ -225,10 +307,7 @@
 
 
 
-    regexpCheck:function(o){
-      var reg = $(o).dataLef('regexp');
-        return reg ? RegExp(reg).test($(o).value) : true;
-    },
+
     /**
      * It changes always, so it should combined handle actions with check
      */
