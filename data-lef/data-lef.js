@@ -22,6 +22,8 @@
  * @see https://github.com/lefwell/_ObsoleteCodes/tree/master/zy201211%20Dead%20JS%20function%20package
  *
  * @var data-lef = (multi-select)
+ *  regexp-
+ *  calc-
  *  unique | unique-line | unique-row
  *  (trim default) | trim-off | trim-htmltag
  *  readonly
@@ -31,13 +33,17 @@
  *  showlen-
  *  submit (submit-click) | submit-mouseover | submit-dbclick ...
  *  type (type-string) | type-number | type-number.2
- *  calc-
- * @var data-lef-trim = (multi-select)
- *  default | off | htmltag | prune
  * @var data-lef-regexp regexp has the highest priority
  *  note
  *    to express \d, you should write data-lef-regexp="\\d" or data-lef-regexp="@d"
  *    to express @, you should write data-lef-regexp="\\@"
+ * @var data-lef-cal  calculate;
+ *  {#name} is the locator, you can use `name` to indicate it sometimes
+ *  example
+ *    data-lef-cal="(textboxa + textboxb) / 100" data-lef-type="number.2"
+ *    data-lef-cal="({#textboxa} {#cal} {#textboxb}) / 100"
+ * @var data-lef-trim = (multi-select)
+ *  default | off | htmltag | prune
  * @note data-lef will remove the blank at head and tail. And combine 2 or
  *  more continued blanks to one. Replace html tags into urlencoded.
  *  Using data-lef-trim = "off" or data-lef="trim-off" to cancel it.
@@ -56,10 +62,6 @@
  *    data-lef-regexp="\\d+" or data-lef-regexp="\\d{1,4}" or data-lef-type="number"
  *  to express a number with 2 decimal numbers
  *    data-lef-regexp="\\d+\\.\\d{2}" or data-lef-type="number.2"
- * @var data-lef-cal  calculate
- *  example
- *    data-lef-cal="(textboxa + textboxb) / 100" data-lef-type="number.2"
- *    data-lef-cal="({#textboxa} {#cal} {#textboxb}) / 100"
  * @var data-lef-name the name of a input or the input inside a <td>
  *
  * @var data-lef-blur
@@ -70,26 +72,20 @@
 (function(){
   var lef;
 
-  Array.prototype.has = function(val){  // replace to $.inArray() if you like
-    // for (var in) will list the prototypes of Array
-    for(var i = 0; i<this.length; ++i) {
-      if (val == this[i])
-        return this;
-    }
-    return false;
-  }
-  Array.prototype.forOnce = function(fn, i){
-    var a_prevent = [];
-    for(var i=0; i<this.length; ++i){
-      if(a_prevent.has(this[i]))
-        continue;
-      fn(this[i]);
-      a_prevent.push(this[i]);
+  /**
+   * I'm sorry to pollute prototypes of global Array, String, Object, but I still think it's helpful
+   */
+  if (!Array.prototype.forEach){
+    Array.prototype.forEach = function(fn, fn_this){
+      var o = Object(this);
+      var len = o.length >>> 0;
+      for(var i=0; i<len; ++i){
+        if(i in o)
+          fn.call(fn_this, o[i], i, o);
+      }
     }
   }
-  String.prototype.has = function(val){
-    return this == val;
-  }
+
   String.prototype.word = function(){
     return this.replace(/[^\w\-]/g,'');
   }
@@ -110,38 +106,39 @@
       'dataLef':function(s, flg){
         var a;
         if(a = $(this).data('lef-'+s)) {
-          if (['errtip', 'len', 'temporary'].has(s))
+          if ($.inArray(s, ['errtip', 'len', 'temporary', 'regexp', 'calc']) > -1)
             return a;
-          if ('regexp'.has(s)) {
-            var reg_arr = a.replace(/\\+/g, '\\').split('\\');
-            var new_a = reg_arr[0];
-            a =  a.match(/\\+/g);
-            for(var i=0; i < a.length; ++i){
-              if(a[i].length % 2){
-                new_a += a[i].length > 1 ? '\\{' + (a[i].length-1) +'}\\' : '\\';
-              } else {
-                new_a += '\\{' + a[i].length + '}'
-              }
-              new_a += reg_arr[i+1];
-            }
-            new_a = ' ' + new_a; // for regexp below
-            return new_a.replace(/[^\\]@[a-z]/g, '\\');
-          }
+          //if ('regexp' == s) {
+          //  var reg_arr = a.replace(/\\+/g, '\\').split('\\');
+          //  var new_a = reg_arr[0];
+          //  a.match(/\\+/g).forEach(function(seg, i){
+          //
+          //    if(seg.length % 2){
+          //      new_a += seg.length > 1 ? '\\{' + (seg.length-1) +'}\\' : '\\';
+          //    } else {
+          //      new_a += '\\{' + seg.length + '}'
+          //    }
+          //    new_a += reg_arr[i+1];
+          //  });
+          //  //console.log(new_a)
+          //  new_a = ' ' + new_a; // for regexp below
+          //  return new_a.replace(/[^\\]@/g, '$1\\');
+          //}
+
           a = a.split(' ');
           if(flg)
-            return a.has(flg)
+            return ($.inArray(flg, a) > -1);
           return a[1] ? a : a[0];
         }
 
-        var v = ' ' + $(this).data('lef');
+        var v = $(this).data('lef');
 
-        if(v != ' ' && (a = v.match(RegExp('\\s'+s+'(\\-[^\\s]+)?','gi')))) {
+        if(v && (a = (' ' + v).match(RegExp('\\s'+s+'(\\-[^\\s]+)?','gi')))) {
           // for (var in) will list the prototypes of Array
-          for (var x=0; x<a.length; ++x){
-            a[x] = a[x].replace(RegExp('('+s+'\\-)|\\s', 'ig'), '');
-          }
+          for(var i=0; i< a.length; ++i)
+            a[i] = a[i].replace(RegExp('('+s+'\\-)|\\s', 'ig'), '');
           if(flg)
-            return a.has(flg);
+            return ($.inArray(flg, a) > -1);
           return a[1] ? a : a[0];
         }
         return false;
@@ -158,6 +155,7 @@
   };
 
   f.prototype = {
+    autoStart: true,
     /**
      * Configurations
      */
@@ -203,7 +201,8 @@
 
     regexpCheck:function(o){
       var reg = $(o).dataLef('regexp');
-      return reg ? RegExp(reg).test($(o).value) : true;
+      //if(reg)console.log(reg + ' : ' + reg.replace(/\\/g,'\\\\') + ' : '+ $(o).val() +(reg ? RegExp('^'+reg+'$').test($(o).val()) : true))
+      return reg ? RegExp('^'+reg+'$').test($(o).val()) : true;
     },
 
     /**
@@ -226,18 +225,27 @@
     toType: function(o, reserve){
 
     },
-    cal:function(o){
-      var cal = $(o).dataLef('cal');
-      if(cal){
-        cal.match(/\{\#[\w\-]+\}/g).forOnce(function(name){
-          if($('input[name='+name+']').length == 1){
-            $('input[name='+name+']').bind('propertychange', function(e){
-
+    calc:function(o){
+      var cc = $(o).dataLef('calc');
+      var nodes = cc.match(/\{\s*\#\s*([\w\-]+)\s*\}/g);
+      nodes = (nodes || []).concat(cc.match(/([\w\-]+)/g));
+      var once = [];
+      var cc2;
+      nodes.forEach(function(name){
+        if(($.inArray(name, once) < 0) && $('input[name='+name+']').length == 1){
+          $('input[name='+name+']').bind('input propertychange', function(e){
+            cc2 = cc;
+            nodes.forEach(function(n) {
+              if($('input[name='+n+']').length == 1){
+                cc2 = cc2.replace(RegExp(n, 'g'), $('input[name='+n+']').val());
+              }
             });
-            
-          }
-        });
-      }
+            $(o).val(eval(cc2.replace(RegExp(name, 'g'), $(this).val())));
+          });
+          once.push(name);
+        }
+      });
+
     },
     /**
      * @return int the placeholder length. a Chinese char's placelen is 2.
@@ -279,13 +287,13 @@
       $(o).removeClass(lef.errTextBoxClass.word())
     },
     errHandle:function(o){
-      console.log(lef.lenrangeHandle(o));
+     // console.log(lef.lenrangeHandle(o));
       lef.hasErr(o) ? lef.setErr(o) : lef.liftErr(o);
     },
 
     showErr:function(o, s){
       var errshow =  $(o).dataLef('errshow');
-      s = s || $(o).dataLef('errtip') || lef.defaultErrTip($(o).attr('placeholder') || $(o).name());
+      s = s || $(o).dataLef('errtip') || lef.defaultErrTip($(o).attr('placeholder') || $(o).attr('name'));
       if(!lef.errShowHandle || errshow == 'off')
         return;
       if(!errshow){
@@ -323,10 +331,12 @@
       $(o).data('lef-len', len);
 
       var show_len = $(o).dataLef('showlen');
+
       // lef.lenrangeCheck(o);
       if(show_len && len >0){
         if(show_len == 'showlen')
           show_len = $(o).parent().find('em');
+        console.log(show_len + ' ' +(show_len == 'showlen'))
         $(show_len).html($(o).dataLef('len'));
       }
 
@@ -360,9 +370,9 @@
       if(!tm){   // do default trim()
         s = s.replace(/^[\s　]+|[\s　]+$/g, '');
         s = s.replace(/\s+/g, ' ');
-        for(var x=0; x<lef.htmlTags.length; ++x){
-          s = s.replace(RegExp(lef.htmlTags[x][0], 'g'), lef.htmlTags[x][1]);
-        }
+        lef.htmlTags.forEach(function(x){
+          s = s.replace(RegExp(x[0], 'g'), x[1]);
+        });
       }
       if($(o).dataLef('trim', 'prune')){
         s = s.replace(/[，,]+/g, ',');
@@ -402,7 +412,7 @@
       }
       html += '>';
 
-      for(var i in arr){
+      for(var i=0; i<arr.length; ++i){
         if(arr[i]){
           html += '<option value="' + i + '"';
           if(arr[i].selected)
@@ -411,8 +421,8 @@
             html += '>' + arr[i];
           html += '</option>';
         }
-
       }
+
       return '</select>';
     },
     /**
@@ -471,6 +481,7 @@
       lef = data_lef;
       console.log('Not Finish Yet...');
       var nodes = 'input:text, input:password, textarea';
+
       $(nodes).bind('input propertychange', function () {
         lef.errHandle(this);
       });
@@ -495,6 +506,9 @@
             lef.beforeSubmit(this, e)
           });
         }
+        if(method = $(this).dataLef('calc')){
+          lef.calc(this);
+        }
       });
     }
 
@@ -503,7 +517,6 @@
   //if(typeof(window.dataLef) != 'function')
     window.dataLef = new f();
   $(document).ready(function(){
-
-    dataLef.init(window.dataLef);
+    window.dataLef.autoStart && window.dataLef.init(window.dataLef);
   });
 })();
