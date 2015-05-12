@@ -56,7 +56,7 @@
  * @var data-lef-errshow class/id where to show the errtip,
  *  default is lef.errTipsClass:'.data-lef-errtip' off is cancel
  * @var data-lef-lenrange int|range
- * @var data-lef-type string|number|number.dec
+ * @var data-lef-type number|number.[int dec 0 on not restrict]
  *  On cal, if the value nodes has a type, use it; else use the result's type
  *  to express a int
  *    data-lef-regexp="\\d+" or data-lef-regexp="\\d{1,4}" or data-lef-type="number"
@@ -113,7 +113,7 @@
       'dataLef':function(s, flg){
         var a;
         if(a = $(this).data('lef-'+s)) {
-          if ($.inArray(s, ['errtip', 'len', 'lenrange', 'temporary', 'regexp', 'calc']) > -1)
+          if ($.inArray(s, ['errtip', 'len', 'lenrange', 'temporary', 'regexp', 'type', 'calc']) > -1)
             return a.toString().replace(/^[\s　]+|[\s　]+$/g, '');
           //if ('regexp' == s) {
           //  var reg_arr = a.replace(/\\+/g, '\\').split('\\');
@@ -193,9 +193,6 @@
 
     dataLefSelector:'dataLefSelector',
 
-
-    errShowHandle:true,
-
     isUsername:function(s){
       return /^[a-zA-Z\u4e00-\u9fa5][\u4e00-\u9fa5\w\-]+[a-zA-Z\u4e00-\u9fa5]$/.test(s);
     },
@@ -208,18 +205,30 @@
 
     regexpCheck:function(o){
       var reg = $(o).dataLef('regexp');
+      if(!reg){
+        reg = $(o).dataLef('type');
+        if(reg && (reg = reg.match(/^number(\.?)(\d+)?$/))){
+          if(!reg[1])
+            reg = '\\d+';
+          else if(!reg[2])
+            reg = '\\d+\\.\\d+';
+          else
+            reg = '\\d+\\.\\d{' + reg[2] + '}';
+        }
+      }
+
       //if(reg)console.log(reg + ' : ' + reg.replace(/\\/g,'\\\\') + ' : '+ $(o).val() +(reg ? RegExp('^'+reg+'$').test($(o).val()) : true))
       return reg ? RegExp('^'+reg+'$').test($(o).val()) : true;
     },
 
     /**
      * regexp --> data-lef-type  -- data-lef="type-"
-     * @return int -1 on string; 0 on int; >0 on the max decimal number, esp. 99 on a descimal,but unknown
+     * @return int -1 on string; 0 on int; >0 on the max decimal number, esp. Number.POSITIVE_INFINITY on a descimal,but unknown
      */
     getDecimalPlaces: function(o){
-      var reg = $(o).dataLef('regexp');
+      var reg;
       var max;
-      if(reg){
+      if(reg = $(o).dataLef('regexp')){
         // match(//g)[0] and match(//)[0]
         if( reg = reg.match(/^(\\d[\+\{\d,\}]*)(\\?\.\\d[\+\{\d,\}]*)?$/)){
           if(!reg[2])
@@ -232,11 +241,20 @@
           return Number.POSITIVE_INFINITY;
         }
       }
+      //if(reg = $(o).dataLef('type')){
+      //  if(reg = reg.match(/^number(\.?)(\d+)?$/)){
+      //    if(!reg[1])
+      //      return 0;
+      //    if(!reg[2])
+      //      return Number.POSITIVE_INFINITY;
+      //    return parseInt(reg[2]);
+      //  }
+      //}
       return -1;
 
     },
     isTypeNumber: function(o, o_reserve){
-      return /^[\d.]+$/.test($(o).val()) && (lef.getDecimalPlaces(o) > -1 || o_reserve && lef.getDecimalPlaces(o_reserve));
+      return /^[\d\.]+$/.test($(o).val()) && (lef.getDecimalPlaces(o) > -1 || o_reserve && lef.getDecimalPlaces(o_reserve));
     },
     calc:function(o){
       var cc = $(o).dataLef('calc');
@@ -259,7 +277,7 @@
                   if(!lef.isTypeNumber($('input[name='+n+']'), $(o)))
                     v = '"' + v + '"';
                   cc2 = cc2.replace(RegExp(n, 'g'), v);
-                  console.log(cc2)
+                  //console.log(cc2)
                 }
               });
             v = $(this).val();
@@ -319,7 +337,7 @@
     showErr:function(o, s){
       var errshow =  $(o).dataLef('errshow');
       s = s || $(o).dataLef('errtip') || lef.defaultErrTip($(o).attr('placeholder') || $(o).attr('name'));
-      if(!lef.errShowHandle || errshow == 'off')
+      if(errshow == 'off')
         return;
       if(!errshow){
         if($(o).parents('form').find(lef.errTipsClass).length < 1)
@@ -330,7 +348,6 @@
       if($(errshow).html() && !$(o).dataLef('temporary')){
 
       }
-
 
       $(errshow).hide(100).html(s).show(180);
       $(o).focus();
@@ -482,12 +499,10 @@
 
     beforeSubmit:function(o, e){
       var r = true;  // 用于返回，让提交按钮后面代码停止执行
-
-      lef.errShowHandle = $(o).dataLef('errshow') == 'off' ? false : true;      // reset back to true is necessary
-
-
-      $(o).parents('form').find(lef.errTipsClass).hide(180);
-      $(o).parents('form').find('input[type!=submit], select, textarea').each(function (i, textbox) {
+      if(!$(o).is('form'))
+        o = $(o).parents('form');
+      $(o).find(lef.errTipsClass).hide(180);
+      $(o).find('input[type!=submit], select, textarea').each(function (i, textbox) {
         if($(textbox).dataLef('submit'))
           return true;    // continue to next loop
         lef.trim($(textbox));
@@ -520,7 +535,7 @@
       });
 
       $('form').submit(function (e) {
-        lef.beforeSubmit(this, e);
+        lef.beforeSubmit($(this).first(), e);
       });
 
       $('body *').each(function(){
