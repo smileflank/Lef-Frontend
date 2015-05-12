@@ -18,23 +18,21 @@ data-lef 还没有完成，暂时只是简单介绍一下她的思路，但是de
 
 暂时data-lef是基于 jQuery的，所以使用 data-lef 您只需要引入这两个JS文件就行了：
 
-  <script src="jquery.js"></script>
+  &lt;script src="jquery.js"&gt;&lt;/script&gt;
 
-  <script src="data-lef.js"></script>
+  &lt;script src="data-lef.js"&gt;&lt;/script&gt;
 
 之后，不需要再写一句JS，就可以在您的HTML代码里面使用data-lef了。
 
-## Example 举个“栗”子
-
 如果一个HTML程序员，需要一个输入框输入用户名 和 这个用户的年龄，毫无疑问必须要写下面的代码：
 
-<input type="text" name="user">
+&lt;input type="text" name="user"&gt;
 
-<input type="text" name="age">
+&lt;input type="text" name="age"&gt;
 
 但是上面没有任何验证功能，用户可以在年龄上输入'Lef' 或者数字 9999 岁，那么okay,我们首先限制一下年龄只能输入最多3位整数：
 
-<input type="text" name="age" data-lef-type="number" data-lef-lenrange="3">
+&lt;input type="text" name="age" data-lef-type="number" data-lef-lenrange="3"&gt;
 
 你去刷新一下界面，就可以发现如果输入的不是数字、或者长度不对，那么就会提示错误，并且即使你点击提交也无法提交，而且会告诉你错在哪里。
 
@@ -73,7 +71,7 @@ data-lef-showlen="showlen" data-lef-calc="(100+300)*40" data-lef-regexp="\d+" da
 
  data-lef-unique = "both(default) | line | row"
 
-    unique both row and line input value; if it's a <td>, make its inside input be unique
+    unique both row and line input value; if it's a &lt;td&gt;, make its inside input be unique
 
  data-lef-case = "lower | upper | camel | underline"
 
@@ -99,7 +97,7 @@ data-lef-showlen="showlen" data-lef-calc="(100+300)*40" data-lef-regexp="\d+" da
 
     data-lef-regexp="\\d+\\.\\d{2}" or data-lef-type="number.2"
 
- data-lef-name the name of a input or the input inside a <td>
+ data-lef-name the name of a input or the input inside a &lt;td&gt;
 
  data-lef-blur
 
@@ -114,17 +112,17 @@ data-lef-showlen="showlen" data-lef-calc="(100+300)*40" data-lef-regexp="\d+" da
 data-lef 中，正则表达具有最高的优先级，如果匹配规则冲突，会优先判定正则规则是否正确。比如设置只能输入两位小数：
 你可以使用下面三种方法之一：
 
-<input type="text" data-lef="type-number.2">
+&lt;input type="text" data-lef="type-number.2"&gt;
 
-<input type="text" data-lef-type="number.2">
+&lt;input type="text" data-lef-type="number.2"&gt;
 
-<input type="text" data-lef-regexp = "\d+\.\d{2}">
+&lt;input type="text" data-lef-regexp = "\d+\.\d{2}"&gt;
 
 ## Self-Configuration 自定义配置
 
 你可以通过JS自己配置一些属性，引入文件后：
 
-<script>
+&lt;script&gt;
 
 dataLef.autoStart = false;
 
@@ -136,4 +134,4 @@ dataLef.errTextBoxClass = '.errShow';
 
 dataLef.init();
 
-</script>
+&lt;/script&gt;
