@@ -25,9 +25,9 @@
   <form>
     <!--<div class="data-lef-errtip"></div>-->
     <div>
-      <input type="text" name="factor1" class="short-textbox" value="0" data-lef="type-number" data-lef-regexp="\d+">
+      <input type="text" name="factor1" class="short-textbox" data-lef="type-number">
       +
-      <input type="text" name="factor2" class="short-textbox" value="0" data-lef="type-number" data-lef-regexp="\d+">
+      <input type="text" name="factor2" class="short-textbox" data-lef="type-number" data-lef-regexp="\d+">
       / 100
       =
       <input type="text" name="factor_result" class="" data-lef="type-number" data-lef-calc="(factor1 + factor2) / 100" data-lef-type="number.2">
@@ -38,7 +38,7 @@
     <div>
       <input type="text" name="firstname" class="short-textbox" placeholder="First Name" data-lef-errtip="Can't you even spell your first name?" data-lef-lenrange="2-9">
       <input type="text" name="lastname" class="short-textbox" placeholder="Last Name" data-lef-errtip="Your last name, please..." data-lef-lenrange="2-9">
-      <input type="text" name="fullname" readonly="readonly" class="no-border-textbox" placeholder="Full Name" data-lef="" data-lef-calc="firstname + lastname">
+      <input type="text" name="fullname" readonly="readonly" class="no-border-textbox" placeholder="Full Name" data-lef="" data-lef-calc="firstname + ' ' +lastname">
     </div>
     <div>
       <input type="text" name="user" data-lef="" data-lef-showlen=".username_len" data-lef-lenrange="6-14" placeholder="Username">

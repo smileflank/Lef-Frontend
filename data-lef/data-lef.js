@@ -72,6 +72,13 @@
 (function(){
   var lef;
 
+  var regDecMax = function(n){      // \d \d+ \d{1,2} \d{3}
+    if(n= n.match(/(\d+)\}$/))         // match(//g)[0] and match(//)[0]
+      return parseInt(n[1]);
+    return 0;
+  }
+
+
   /**
    * I'm sorry to pollute prototypes of global Array, String, Object, but I still think it's helpful
    */
@@ -106,8 +113,8 @@
       'dataLef':function(s, flg){
         var a;
         if(a = $(this).data('lef-'+s)) {
-          if ($.inArray(s, ['errtip', 'len', 'temporary', 'regexp', 'calc']) > -1)
-            return a;
+          if ($.inArray(s, ['errtip', 'len', 'lenrange', 'temporary', 'regexp', 'calc']) > -1)
+            return a.toString().replace(/^[\s　]+|[\s　]+$/g, '');
           //if ('regexp' == s) {
           //  var reg_arr = a.replace(/\\+/g, '\\').split('\\');
           //  var new_a = reg_arr[0];
@@ -133,7 +140,7 @@
 
         var v = $(this).data('lef');
 
-        if(v && (a = (' ' + v).match(RegExp('\\s'+s+'(\\-[^\\s]+)?','gi')))) {
+        if(v && (a = (' ' + v).match(RegExp('\\s'+s+'(\\-[^\\s]+)?','gi')))) {  // match(//g)[0] and match(//)[0]
           // for (var in) will list the prototypes of Array
           for(var i=0; i< a.length; ++i)
             a[i] = a[i].replace(RegExp('('+s+'\\-)|\\s', 'ig'), '');
@@ -207,44 +214,57 @@
 
     /**
      * regexp --> data-lef-type  -- data-lef="type-"
-     * @return int -1 on no; 0 on int; >0 on the max decimal number, esp. 99 on unknown
+     * @return int -1 on string; 0 on int; >0 on the max decimal number, esp. 99 on a descimal,but unknown
      */
-    isTypeNumber: function(o){
+    getDecimalPlaces: function(o){
       var reg = $(o).dataLef('regexp');
+      var max;
       if(reg){
-        if(reg = reg.match(/^\\d[\+\{\d,\}]*(\\.\\d[\+\{\d,\}]*)?$/)){
-          if(!reg[1])
+        // match(//g)[0] and match(//)[0]
+        if( reg = reg.match(/^(\\d[\+\{\d,\}]*)(\\?\.\\d[\+\{\d,\}]*)?$/)){
+          if(!reg[2])
             return 0;
-
+          if((max = regDecMax(reg[2])) > 0)
+            return max;
+          var len_max = lef.getLenrange(o)[1];
+          if((max = regDecMax(reg[1])) > 0 && len_max !== Number.POSITIVE_INFINITY)
+            return len_max - max;
+          return Number.POSITIVE_INFINITY;
         }
-
       }
-
+      return -1;
 
     },
-    toType: function(o, reserve){
-
+    isTypeNumber: function(o, o_reserve){
+      return /^[\d.]+$/.test($(o).val()) && (lef.getDecimalPlaces(o) > -1 || o_reserve && lef.getDecimalPlaces(o_reserve));
     },
     calc:function(o){
       var cc = $(o).dataLef('calc');
-      var nodes = cc.match(/\{\s*\#\s*([\w\-]+)\s*\}/g);
-      nodes = (nodes || []).concat(cc.match(/([\w\-]+)/g));
+      var nodes = cc.match(/\{\s*\#\s*([\w\-]+)\s*\}/g);       // match(//g)[0] and match(//)[0]
+      nodes = (nodes || []).concat(cc.match(/([\w\-]+)/g));      // match(//g)[0] and match(//)[0]
       var once = [];
       var cc2;
+      var err;
+      var v;
       nodes.forEach(function(name){
         if(($.inArray(name, once) < 0) && $('input[name='+name+']').length == 1){
           $('input[name='+name+']').bind('input propertychange', function(e){
-            var err = false;
+              err = false;
               cc2 = cc;
               nodes.forEach(function(n) {
                 if($('input[name='+n+']').length == 1){
-                  if(lef.hasErr($('input[name='+n+']')))
+                  v= $('input[name='+n+']').val();
+                  if(lef.hasErr($('input[name='+n+']')) || (v.length < 1))
                     err = true;
-                  cc2 = cc2.replace(RegExp(n, 'g'), $('input[name='+n+']').val());
+                  if(!lef.isTypeNumber($('input[name='+n+']'), $(o)))
+                    v = '"' + v + '"';
+                  cc2 = cc2.replace(RegExp(n, 'g'), v);
+                  console.log(cc2)
                 }
               });
-            if(!err && !lef.hasErr($(this)))
-              $(o).val(eval(cc2.replace(RegExp(name, 'g'), $(this).val())));
+            v = $(this).val();
+            if(!err && !lef.hasErr($(this)) && (v.length > 0))
+              $(o).val(eval(cc2.replace(RegExp(name, 'g'), v)));
 
           });
           once.push(name);
@@ -317,9 +337,22 @@
     },
 
 
-
-
-
+    /**
+     * @return array [min, max];
+     */
+    getLenrange:function(o){
+      var range = $(o).dataLef('lenrange');
+      if(range){      // int|range
+        var e = range.replace(/\s/g, '').match(/^(\d+)?([^\d])?(\d+)?$/);   // match(//g)[0] and match(//)[0]
+        var r =[];
+        if(!e[2])
+          return [0, parseInt(e[1])];
+        r[0] = e[1] ? parseInt(e[1]) : 0;
+        r[1] = e[3] ? parseInt(e[3]) : Number.POSITIVE_INFINITY;
+        return r;
+      }
+      return [0, Number.POSITIVE_INFINITY];
+    },
 
     /**
      * It changes always, so it should combined handle actions with check
@@ -341,21 +374,10 @@
       if(show_len && len >0){
         if(show_len == 'showlen')
           show_len = $(o).parent().find('em');
-        console.log(show_len + ' ' +(show_len == 'showlen'))
         $(show_len).html($(o).dataLef('len'));
       }
-
-
-      var range = $(o).dataLef('lenrange');
-      if(range){      // int|range
-        var e = range.toString().split('-'),
-          i = function(n){return parseInt(n)};
-        return e[1] ? (len >= i(e[0]) && len<=i(e[1])) : (len<i(e[1]));
-      }
-
-
-
-      return true;
+      var range = lef.getLenrange(o);
+      return !(len < range[0] || len > range[1]);
     },
 
 
