@@ -4,7 +4,9 @@ data-lef is light html form and sql data management JS API. It has not been fini
 
 data-lef 是一款轻量级的：HTML表单及数据库管理JS插件，目的是将大量重复的表单验证、数据库后台管理的功能解耦成独立的JS插件。data-lef 是根据我以前实际作业经验而总结的一套方案，暂时还未完成，但是相信完成后，其作用一定是非常广泛的。
 
-data-lef 对HTML + CSS代码没有任何干扰，可以实现HTML + CSS 程序员与JS 零干扰开发。也就是说：data-lef 可以让只会HTML、CSS的程序员就可以实现对表单的前端验证和运算。
+data-lef 唯一的好处，就是纯HTML，不需要写任何一句Javascript就能方便的管理form及
+简单的数据库管理（通过Ajax接口)；data-lef 对HTML + CSS代码没有任何干扰，可以实现
+HTML + CSS 程序员与JS 零干扰开发。也就是说：data-lef 可以让只会HTML、CSS的程序员就可以实现对表单的前端验证和运算。
 
 # Links 参考链接
 
@@ -24,9 +26,7 @@ data-lef 还没有完成，暂时只是简单介绍一下她的思路，但是de
 
 之后，不需要再写一句JS，就可以在您的HTML代码里面使用data-lef了。
 
-如果一个HTML程序员，需要一个输入框输入用户名 和 这个用户的年龄，毫无疑问必须要写下面的代码：
-
-&lt;input type="text" name="user"&gt;
+如果一个HTML程序员，需要一个输入框输入年龄，毫无疑问必须要写下面的代码：
 
 &lt;input type="text" name="age"&gt;
 
@@ -36,13 +36,30 @@ data-lef 还没有完成，暂时只是简单介绍一下她的思路，但是de
 
 你去刷新一下界面，就可以发现如果输入的不是数字、或者长度不对，那么就会提示错误，并且即使你点击提交也无法提交，而且会告诉你错在哪里。
 
+### 下面我们举一些简单的例子
+
+限制只能输入：姓名，一个中文算两个英文字母，输入6-14位字母长度；并且在class="name_length" 的节点显示已经输入的字符长度；如果用户输入错误，并且强制提交，那么就会在
+id="name_err"的节点提示：“你连名字都不会写吗？”
+
+&lt;input type="text" name="name" data-lef-lentype="place" data-lef-lenrange="6-14" data-lef-showlen=".name_length"
+data-lef-errtip="你连名字都不会写吗？" data-lef-errshow="#name_err" &gt;
+
+为了HTML代码的美观性，data-lef 提供了另外一种完全等价的表述
+
+&lt;input type="text" name="name" data-lef="lentype-place lenrange-6-14 
+showlen-.name_length errshow-#name_err" data-lef-errtip="你连名字都不会写吗？" &gt;
+
+
 ## data-lef 的两种表达方式
 
-您可以使用两种等价的data-lef 表达方式，一种是 data-lef="属性-值" 一种是 data-lef-属性="值"，这是等价的，举个例子：
+为了HTML代码的美观性，data-lef提供了两种等价表达方式，一种是 data-lef="属性-值" 一种是 data-lef-属性="值"，这是等价的，举个例子：
+
 data-lef="showlen calc-(100+300)*40 regexp-\d+ lenrange-2-5"
+
 等价于
 
 data-lef-showlen="showlen" data-lef-calc="(100+300)*40" data-lef-regexp="\d+" data-lef-lengrange="2-5"
+
 当然，如果属性值有空格的，那么就不能使用 data-lef=""表示了。
 
 ## data-lef 标签
