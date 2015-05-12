@@ -90,9 +90,7 @@
     }
   }
 
-  String.prototype.word = function(){
-    return this.replace(/[^\w\-]/g,'');
-  }
+
   $.fn.extend(
     {
       //'textval':function(v){
@@ -154,9 +152,9 @@
   );
 
   function f(){}
-  f.__proto__ = {
-
-  };
+  //f.__proto__ = {
+  //
+  //};
 
   f.prototype = {
     autoStart: true,
@@ -321,10 +319,10 @@
       return !no_err;
     },
     setErr:function(o){
-      $(o).addClass(lef.errTextBoxClass.word())
+      $(o).addClass(lef.errTextBoxClass.replace(/[^\w\-]/g,''))
     },
     liftErr:function(o){
-      $(o).removeClass(lef.errTextBoxClass.word())
+      $(o).removeClass(lef.errTextBoxClass.replace(/[^\w\-]/g,''))
     },
     errHandle:function(o){
      // console.log(lef.lenrangeHandle(o));
@@ -338,12 +336,12 @@
         return;
       if(!errshow){
         if($(o).parents('form').find(lef.errTipsClass).length < 1)
-          $(o).parents('form').prepend('<p class="'+ lef.errTipsClass +'" data-lef="temporary">'+ s +'</p>');
+          $(o).parents('form').prepend('<p class="'+ lef.errTipsClass.replace(/[^\w\-]/g,'') +'" data-lef="temporary">'+ s +'</p>');
         errshow = $(o).parents('form').find(lef.errTipsClass);
       }
 
-      if($(errshow).html() && !$(o).dataLef('temporary')){
-
+      if($(errshow).html().length < 1){
+        $(errshow).html(s);
       }
 
       $(errshow).hide(100).html(s).show(180);
@@ -532,7 +530,7 @@
       });
 
       $('form').submit(function (e) {
-        lef.beforeSubmit($(this), e);
+        lef.beforeSubmit($(this).first(), e);
       });
 
       $('body *').each(function(){
