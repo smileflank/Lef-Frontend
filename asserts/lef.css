@@ -1,0 +1,177 @@
+@charset "utf-8";
+
+/**
+ <div id="service-info-cda" class="a">
+	<a href="#" class="service-info-cda">产品介绍</a><a href="#">功能参数</a><a href="#">模版展示</a><a href="#">成功案例</a><a href="#" >常见问题</a><a href="#">增值服务</a><a href="#">支付说明</a>
+</div>
+
+<div id="service-info-cda-c"> <div class="service-info-cda-1"><div class="service-info-cda-2">
+*/
+
+
+*{margin:0;padding:0;}
+:focus {outline: none}
+ul{list-style-position:outside;list-style:none}
+
+ul li{list-style:none}
+ol li{list-style-position:inside;}
+/* 其中，overflow: hidden和white-space: nowrap都是必须的否则不会显示省略号；-o-text-overflow: ellipsis针对Opera；而宽度的设定主要是针对IE6；该方法支持Internet Explorer, Safari, Chrome 和 Opera，但FF并不支持*/
+li,.a a,.al li,a.ct h2{line-height:22px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow:ellipsis;_width:100%}
+p{line-height:25px;}
+
+blockquote:before, blockquote:after, q:before, q:after {content:'';}
+
+body {font:400 14px/25px "微软雅黑","宋体",Arial;-webkit-text-size-adjust:none}
+a{text-decoration:none;cursor:pointer}
+a:hover{text-decoration:underline}
+
+
+
+
+
+/*清除链接虚框，下面是sohu的，但是检测不可用*/
+/*a,area {blr:expression(this.onFocus=this.blur()) }  for IE
+:focus {-moz-outline-style: none; }  for Firefox
+*/
+/*fieldset默认有边框，这里需要去除，然后只保留上*/
+
+
+
+img,fieldset{border:0}
+fieldset{display:block;border-top:1px solid #DDD}
+select,input,img{vertical-align:middle}
+textarea{resize:none}
+table{border:1px solid #E9E9E9;font-size:12px;border-collapse:collapse;border-spacing:0;width:100%}
+tr{line-height:22px}
+th,td{vertical-align:middle;float:none !important;border:solid #E9E9E9;border-width:0 1px 1px 0;padding:3px 5px}
+
+tfoot ,em, dfn {font-style:italic;}
+sup, sub {line-height:0;}
+abbr, acronym {border-bottom:1px dotted #666;}
+address {margin:0 0 1.5em;font-style:italic;}
+del {color:#666;}
+pre {margin:1.5em 0;white-space:pre;}
+pre, code, tt {font:1em 'andale mono', 'lucida console', monospace;line-height:1.5;}
+
+
+
+
+h1{font:400 24px/48px "Microsoft Yahei";}
+h1,h2{white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
+h2{font:400 17px/36px Microsoft YaHei;height:36px;overflow:hidden}
+h3,h4{font-size:14px;line-height:22px;height:22px}
+/*
+#c h2{height:24px;line-height:24px;font-size:18px;border-bottom:#DEDFE1 1px solid;margin:30px 0 10px;padding:0 0 6px 0}
+#c h3{font-size:16px;margin:15px 0 5px 0}*/
+
+h4{position:relative;height:32px;line-height:32px}
+/*.ad是广告 根据ad自动判断*/
+/*.al==>ul */
+h4,.a,.al{display:block}
+
+h4 a:hover,.a a{text-decoration:none}
+h4 .pr{font-size:12px}
+.a a,.al li,.ai a{display:inline-block;float:left;text-align:center}
+/*fh表示 li 或者同一行的p ，或者a 超过部分用...代替*/
+.a a,.al li,a.ct h2{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+
+.p{float:left}.o{clear:both}.q{float:right}
+
+/* .php 已经被pre征用
+<pre class="php/pjs/phtm/pvb/pcpp/pjava">*/
+
+.po-p p, .po-div div, .po{position:relative}
+.pr{position:absolute;right:0;top:0;}
+.pn{display:none}
+
+
+.g:after,.a:after,.ai:after,.ov:after, .ov-p p:after, .ov-div div:after, .v:after {content:"\0020";display:block;height:0;clear:both;visibility:hidden;overflow:hidden;}
+.a,.ai,.ov,.ov-p p, .ov-div div{display:block;}
+
+/* .g  ==> 文章列表 */
+/* 类似百度/谷歌搜索的  .go  页码类  .goo 当前页码*/
+.go1{}
+.go{}
+
+/* .go2   .go2o   网站内部自定义页脚样式2*/
+
+/* 左右结构图片，图片采用主流16:9（也是iphone 5S 手机尺寸）尺寸; */
+.g1 .g,.g2 .g{border-top:1px solid #ccc;padding:20px 0}
+.g a{color:#08F}
+.g a:hover{background:#08F;color:#FFF;text-decoration:none}
+.g2 .g a.p{margin:0 15px 0 0}
+.g2 h2{line-height:32px;height:32px;font-size:18px}
+
+
+
+.fo{text-align:center}.fq{text-align:right}
+
+
+/* box-shadow:默认：投影/inset内阴影 位移 阴影大小 扩散默认0 颜色 */
+/* box-shadow:投影 位移3px 阴影3px  扩散0 颜色#DDD*/
+.f,.ff{border:1px solid #DDD}
+.aiff img,.ff{border-radius:3px;-moz-box-shadow:3px 3px 3px #DDD;-webkit-box-shadow:3px 3px 3px #DDD;box-shadow:3px 3px 3px #DDD}
+:root .ai img,:root .ff{filter:progid:DXImageTransform.Microsoft.Shadow(color=#DDD,direction=120,strength=3)}
+
+
+
+
+
+
+/*  仅id*/
+/*.ai 两张图片下面有文字描述or not，宽度自己页内设置，这里默认250宽度的 两张图片宽度高度，.ai a overflow:不能是hidden<因为有超出来的shadow，所以
+
+*/
+/* fg fg0 fg1 1推荐（一次阅读/） 2 热帖 3 爆料（可能是谣言）4纯图片 5原创 6付费采用  7精华（） 8 优秀（查询类，常用） 9置顶 */
+/* 默认文章列表都是35px */
+.fg li{background:url(p_fg.png) 0 -2500px no-repeat;padding-left:13px;line-height:25px}
+.fg1,.fg2,.fg3,.fg4,.fg5,.fg6,.fg7,.fg8,.fg9{text-indent:999px;background:url(p_fg.png) 0 -23px no-repeat;width:25px;height:16px;display:inline-block;margin:0 3px 0 0}
+.fg2{background-position:0 -48px}.fg3{background-position:0 -73px}.fg4{background-position:0 -98px}.fg5{background-position:0 -123px}.fg6{background-position:0 -148px}.fg7{background-position:0 -173px}.fg8{background-position:0 -198px}.fg9{background-position:0 -223px}
+
+
+
+
+
+.ai a{line-height:25px;overflow:hidden}
+/* 这是多图 */
+
+.aiff img{border:1px solid #333;border-radius:3px}
+/* 如果 .ai 是 a -->img h3 p 那么 一张图，然后左右结构，一般放在 300px 里面 */
+a.ai img{float:left;}
+.ai h3{color:#222;overflow:hidden;font:400 16px/25px Microsoft YaHei;height:25px}
+.ai h3,a.ai p{float:right;width:200px}
+a.ai p{line-height:18px;font-size:12px;height:54px;color:#888;overflow:hidden}
+
+
+.mg{margin:0 0 9px 0;_margin:0 0 4px 0}
+.mh{height:9px}
+
+.w{margin:0 auto;overflow:hidden;width:1080px;}
+
+
+
+/*****************************************************************************************
+ *                                        COLOR
+ */
+body, h1 a, h2 a, .f-body, a.f-body{color:#333}
+a, a:hover, .f-link, a.f-link, .f-hover, a.f-hover{color:#3b5998}
+form, input, textarea, .f-form,a.f-form{color:#666}
+
+/*fb 背景，用于表格背景色*/
+.fb{background:#F7F7F7}
+.f-gray,a.f-gray{color:#808080}
+.f-red,a.f-red{color:#f00}
+.f-pink,a.a-pink{color:#ffc0cb}
+.f-orange,a.f-orange{color:#f60}
+.f-yellow,a.f-yellow{color:#feb612}
+.f-green,a.f-green{color:#080}
+.f-blue,a.f-blue{color:#08f}
+.f-violet,a.f-violet{color:#80f}
+
+
+/******************************************************************************************
+ *            LED
+ */
+.data-lef-errtextbox{background:#ebf}
+.data-lef-errtip{display:none}
