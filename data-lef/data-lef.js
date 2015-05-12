@@ -32,11 +32,8 @@
  *  notnull | lenrange (make this.value not null) | lenrange-1-5
  *  showlen-
  *  submit (submit-click) | submit-mouseover | submit-dbclick ...
- *  type (type-string) | type-number | type-number.2
+ *  type-number | type-number.2
  * @var data-lef-regexp regexp has the highest priority
- *  note
- *    to express \d, you should write data-lef-regexp="\\d" or data-lef-regexp="@d"
- *    to express @, you should write data-lef-regexp="\\@"
  * @var data-lef-cal  calculate;
  *  {#name} is the locator, you can use `name` to indicate it sometimes
  *  example
