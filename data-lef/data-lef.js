@@ -211,7 +211,7 @@
           if(!reg[1])
             reg = '\\d+';
           else if(!reg[2])
-            reg = '\\d+\\.\\d+';
+            reg = '\\d+(\\.\\d*)?';
           else
             reg = '\\d+\\.\\d{' + reg[2] + '}';
         }
@@ -535,7 +535,7 @@
       });
 
       $('form').submit(function (e) {
-        lef.beforeSubmit($(this).first(), e);
+        lef.beforeSubmit($(this), e);
       });
 
       $('body *').each(function(){
