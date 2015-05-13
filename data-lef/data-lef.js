@@ -1,4 +1,9 @@
 /**
+ * *****************************************************************************************************
+ * 敬请您先会使用data-lef，然后再给我一个更好的建议 —— 请不要把data-lef跟其他API比较，除非您真的会用data-lef
+ * Please give me some advices after KNOWING HOW TO USE data-lef. data-lef is different with other APIs.
+ * *******************************************************************************************************
+ *
  * data-lef (Lef Form/Data Management API)
  * Form is used for <form> management and Data is for light sql management
  * @example
