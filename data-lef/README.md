@@ -1,12 +1,21 @@
 # data-lef (Lef Form/Data Management API)
 
-data-lef is light html form and sql data management JS API. It has not been finished yet. It will be really helpful for web developers.
+data-lef is light html form and sql data management JS API. **It's use for decouple**. 
+It has not been finished yet. It will be really helpful for web developers.
 
-data-lef 是一款轻量级的：HTML表单及数据库管理JS插件，目的是将大量重复的表单验证、数据库后台管理的功能解耦成独立的JS插件。data-lef 是根据我以前实际作业经验而总结的一套方案，暂时还未完成，但是相信完成后，其作用一定是非常广泛的。
+data-lef 是一款**以解耦为目的**、轻量级的：HTML表单及数据库管理JS插件，目的是将大量重复的表单验证、数据库后台管理的功能解耦成独立的JS插件。data-lef 是根据我以前实际作业经验而总结的一套方案，暂时还未完成，但是相信完成后，其作用一定是非常广泛的。
+
+**data-lef 的目的不是简化代码、节省工作量，而是为了解耦！！！**
 
 data-lef 唯一的好处，就是纯HTML，不需要写任何一句Javascript就能方便的管理form及
 简单的数据库管理（通过Ajax接口)；data-lef 对HTML + CSS代码没有任何干扰，可以实现
-HTML + CSS 程序员与JS 零干扰开发。也就是说：data-lef 可以让只会HTML、CSS的程序员就可以实现对表单的前端验证和运算。
+HTML + CSS 程序员与JS 零干扰开发。
+
+### data-lef 只为解耦、零干扰的解释
+你可以在一个项目任意开发阶段使用、或者弃用data-lef ，而且使用、和弃用对代码没有
+任何影响（只有功能的存在和消失）。
+因为data-lef 没有生造出任何一种干扰HTML、或者JS的新“语法”。如果你的项目之前使用
+过自己的JS验证代码，在使用data-lef之后，两者可以并列存在！
 
 # Links 参考链接
 
@@ -141,14 +150,23 @@ data-lef 中，正则表达具有最高的优先级，如果匹配规则冲突�
 
 &lt;script&gt;
 
-dataLef.autoStart = false;
+window.dataLef.errTipsClass = '.errInputBox';
 
-dataLef.errTipsClass = '.errInputBox';
+window.dataLef.errTextBoxClass = '.errShow';
 
-dataLef.errTextBoxClass = '.errShow';
-
+window.dataLef.data = function(){     // 如果想换种数据格式，比如protobuf等
+  toArray:function(data){
+     return protobufToArray(data);
+  },
+  toData: function(arr){
+    return arrayToProtobuf(arr)
+  }
+}
 ...
 
-dataLef.init();
+// 如果想要手动启动dataLef，只需要：
+window.dataLef.autoStart = false;
+// 之后在你想要启动的地方使用 dataLef.init() 就可以了
+window.dataLef.init();
 
 &lt;/script&gt;
