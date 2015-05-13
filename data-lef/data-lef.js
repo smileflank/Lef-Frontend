@@ -66,494 +66,495 @@
  * @var data-lef-len
  * @var data-lef-temporary
  */
-(function(){
-  var lef;
+(function () {
+    var lef;
 
-  var regDecMax = function(n){      // \d \d+ \d{1,2} \d{3}
-    if(n= n.match(/(\d+)\}$/))         // match(//g)[0] and match(//)[0]
-      return parseInt(n[1]);
-    return 0;
-  }
-
-
-  /**
-   * I'm sorry to pollute prototypes of global Array, String, Object, but I still think it's helpful
-   */
-  if (!Array.prototype.forEach){
-    Array.prototype.forEach = function(fn, fn_this){
-      var o = Object(this);
-      var len = o.length >>> 0;
-      for(var i=0; i<len; ++i){
-        if(i in o)
-          fn.call(fn_this, o[i], i, o);
-      }
+    var regDecMax = function (n) {      // \d \d+ \d{1,2} \d{3}
+        if (n = n.match(/(\d+)\}$/))         // match(//g)[0] and match(//)[0]
+            return parseInt(n[1]);
+        return 0;
     }
-  }
 
 
-  $.fn.extend(
-    {
-      //'textval':function(v){
-      //  var u = typeof(v) == 'undefined';
-      //    if($(this).is('input') || $(this).is('textarea'))
-      //      return u ? $(this).val() : $(this).val(v);
-      //    else
-      //      return u ? $(this).html() : $(this).html(v);
-      //},
-      /**
-       * Get|Check dataLef
-       * @arg string flg = false optional
-       * @return string|array|bool
-       */
-      'dataLef':function(s, flg){
-        var a;
-        if(a = $(this).data('lef-'+s)) {
-          if ($.inArray(s, ['errtip', 'len', 'lenrange', 'temporary', 'regexp', 'type', 'calc']) > -1)
-            return a.toString().replace(/^[\s　]+|[\s　]+$/g, '');
-          //if ('regexp' == s) {
-          //  var reg_arr = a.replace(/\\+/g, '\\').split('\\');
-          //  var new_a = reg_arr[0];
-          //  a.match(/\\+/g).forEach(function(seg, i){
-          //
-          //    if(seg.length % 2){
-          //      new_a += seg.length > 1 ? '\\{' + (seg.length-1) +'}\\' : '\\';
-          //    } else {
-          //      new_a += '\\{' + seg.length + '}'
-          //    }
-          //    new_a += reg_arr[i+1];
-          //  });
-          //  //console.log(new_a)
-          //  new_a = ' ' + new_a; // for regexp below
-          //  return new_a.replace(/[^\\]@/g, '$1\\');
-          //}
-
-          a = a.split(' ');
-          if(flg)
-            return ($.inArray(flg, a) > -1);
-          return a[1] ? a : a[0];
+    /**
+     * I'm sorry to pollute prototypes of global Array, String, Object, but I still think it's helpful
+     */
+    if (!Array.prototype.forEach) {
+        Array.prototype.forEach = function (fn, fn_this) {
+            var o = Object(this);
+            var len = o.length >>> 0;
+            for (var i = 0; i < len; ++i) {
+                if (i in o)
+                    fn.call(fn_this, o[i], i, o);
+            }
         }
-
-        var v = $(this).data('lef');
-
-        if(v && (a = (' ' + v).match(RegExp('\\s'+s+'(\\-[^\\s]+)?','gi')))) {  // match(//g)[0] and match(//)[0]
-          // for (var in) will list the prototypes of Array
-          for(var i=0; i< a.length; ++i)
-            a[i] = a[i].replace(RegExp('('+s+'\\-)|\\s', 'ig'), '');
-          if(flg)
-            return ($.inArray(flg, a) > -1);
-          return a[1] ? a : a[0];
-        }
-        return false;
-      },
-      'datalef':function(s, flg){
-        return $(this).dataLef();
-      }
     }
-  );
 
-  function f(){}
-  //f.__proto__ = {
-  //
-  //};
 
-  f.prototype = {
-    autoStart: true,
-    /**
-     * Configurations
-     */
-    errTextBoxClass:'.data-lef-errtextbox',
-    errTipsClass:'.data-lef-errtip',
-    /**
-     * @return string default tip shows in the errTipsClass
-     */
-    defaultErrTip: function(s){
-      return s+ "错误";
-    },
-    htmlTags: [
-      ['—', '&#8212;'],
-      ['\'', '&#39;'],
-      ['\"', '&quot;'],
-      ['<', '&lt;'],
-      ['>', '&gt;'],
-      ['\\\\', '&#92;']
-    ],
-    data:{
-      toArray:function(){
-        return JSON.parse(data);
-      },
-      toData:function(){
-        return JSON.stringify(arr);
-      }
-    },
+    $.fn.extend(
+        {
+            //'textval':function(v){
+            //  var u = typeof(v) == 'undefined';
+            //    if($(this).is('input') || $(this).is('textarea'))
+            //      return u ? $(this).val() : $(this).val(v);
+            //    else
+            //      return u ? $(this).html() : $(this).html(v);
+            //},
+            /**
+             * Get|Check dataLef
+             * @arg string flg = false optional
+             * @return string|array|bool
+             */
+            'dataLef': function (s, flg) {
+                var a;
+                if (a = $(this).data('lef-' + s)) {
+                    if ($.inArray(s, ['errtip', 'len', 'lenrange', 'temporary', 'regexp', 'type', 'calc']) > -1)
+                        return a.toString().replace(/^[\s　]+|[\s　]+$/g, '');
+                    //if ('regexp' == s) {
+                    //  var reg_arr = a.replace(/\\+/g, '\\').split('\\');
+                    //  var new_a = reg_arr[0];
+                    //  a.match(/\\+/g).forEach(function(seg, i){
+                    //
+                    //    if(seg.length % 2){
+                    //      new_a += seg.length > 1 ? '\\{' + (seg.length-1) +'}\\' : '\\';
+                    //    } else {
+                    //      new_a += '\\{' + seg.length + '}'
+                    //    }
+                    //    new_a += reg_arr[i+1];
+                    //  });
+                    //  //console.log(new_a)
+                    //  new_a = ' ' + new_a; // for regexp below
+                    //  return new_a.replace(/[^\\]@/g, '$1\\');
+                    //}
 
-    dataLefSelector:'dataLefSelector',
-
-    isUsername:function(s){
-      return /^[a-zA-Z\u4e00-\u9fa5][\u4e00-\u9fa5\w\-]+[a-zA-Z\u4e00-\u9fa5]$/.test(s);
-    },
-    isEmail: function (s) {
-      return /^[\w\-\.]+\@[\w\-]+(\.[a-z]+)+$/.test(s);
-    },
-    isPhone: function (s) {
-      return /^\d+$/.test(s);
-    },
-
-    regexpCheck:function(o){
-      var reg = $(o).dataLef('regexp');
-      if(!reg){
-        reg = $(o).dataLef('type');
-        if(reg && (reg = reg.match(/^number(\.?)(\d+)?$/))){
-          if(!reg[1])
-            reg = '\\d+';
-          else if(!reg[2])
-            reg = '\\d+(\\.\\d*)?';
-          else
-            reg = '\\d+\\.\\d{' + reg[2] + '}';
-        }
-      }
-
-      //if(reg)console.log(reg + ' : ' + reg.replace(/\\/g,'\\\\') + ' : '+ $(o).val() +(reg ? RegExp('^'+reg+'$').test($(o).val()) : true))
-      return reg ? RegExp('^'+reg+'$').test($(o).val()) : true;
-    },
-
-    /**
-     * regexp --> data-lef-type  -- data-lef="type-"
-     * @return int -1 on string; 0 on int; >0 on the max decimal number, esp. Number.POSITIVE_INFINITY on a descimal,but unknown
-     */
-    getDecimalPlaces: function(o){
-      var reg;
-      var max;
-      if(reg = $(o).dataLef('regexp')){
-        // match(//g)[0] and match(//)[0]
-        if( reg = reg.match(/^(\\d[\+\{\d,\}]*)(\\?\.\\d[\+\{\d,\}]*)?$/)){
-          if(!reg[2])
-            return 0;
-          if((max = regDecMax(reg[2])) > 0)
-            return max;
-          var len_max = lef.getLenrange(o)[1];
-          if((max = regDecMax(reg[1])) > 0 && len_max !== Number.POSITIVE_INFINITY)
-            return len_max - max;
-          return Number.POSITIVE_INFINITY;
-        }
-      }
-      //if(reg = $(o).dataLef('type')){
-      //  if(reg = reg.match(/^number(\.?)(\d+)?$/)){
-      //    if(!reg[1])
-      //      return 0;
-      //    if(!reg[2])
-      //      return Number.POSITIVE_INFINITY;
-      //    return parseInt(reg[2]);
-      //  }
-      //}
-      return -1;
-
-    },
-    isTypeNumber: function(o, o_reserve){
-      return /^[\d\.]+$/.test($(o).val()) && (lef.getDecimalPlaces(o) > -1 || o_reserve && lef.getDecimalPlaces(o_reserve));
-    },
-    calc:function(o){
-      var cc = $(o).dataLef('calc');
-      var nodes = cc.match(/\{\s*\#\s*([\w\-]+)\s*\}/g);       // match(//g)[0] and match(//)[0]
-      nodes = (nodes || []).concat(cc.match(/([\w\-]+)/g));      // match(//g)[0] and match(//)[0]
-      var once = [];
-      var cc2;
-      var err;
-      var v;
-      nodes.forEach(function(name){
-        if(($.inArray(name, once) < 0) && $('input[name='+name+']').length == 1){
-          $('input[name='+name+']').bind('input propertychange', function(e){
-              err = false;
-              cc2 = cc;
-              nodes.forEach(function(n) {
-                if($('input[name='+n+']').length == 1){
-                  v= $('input[name='+n+']').val();
-                  if(lef.hasErr($('input[name='+n+']')) || (v.length < 1))
-                    err = true;
-                  if(!lef.isTypeNumber($('input[name='+n+']'), $(o)))
-                    v = '"' + v + '"';
-                  cc2 = cc2.replace(RegExp(n, 'g'), v);
-                  //console.log(cc2)
+                    a = a.split(' ');
+                    if (flg)
+                        return ($.inArray(flg, a) > -1);
+                    return a[1] ? a : a[0];
                 }
-              });
-            v = $(this).val();
-            if(!err && !lef.hasErr($(this)) && (v.length > 0))
-              $(o).val(eval(cc2.replace(RegExp(name, 'g'), v)));
 
-          });
-          once.push(name);
+                var v = $(this).data('lef');
+
+                if (v && (a = (' ' + v).match(RegExp('\\s' + s + '(\\-[^\\s]+)?', 'gi')))) {  // match(//g)[0] and match(//)[0]
+                    // for (var in) will list the prototypes of Array
+                    for (var i = 0; i < a.length; ++i)
+                        a[i] = a[i].replace(RegExp('(' + s + '\\-)|\\s', 'ig'), '');
+                    if (flg)
+                        return ($.inArray(flg, a) > -1);
+                    return a[1] ? a : a[0];
+                }
+                return false;
+            },
+            'datalef': function (s, flg) {
+                return $(this).dataLef();
+            }
         }
-      });
+    );
 
-    },
-    /**
-     * @return int the placeholder length. a Chinese char's placelen is 2.
-     */
-    charlen: function(s){
-      return s.length;
-    },
-    placelen: function (s) {
-      var l = 0;
-      for (var i = 0; i < s.length; ++i) {
-        l += s.charCodeAt(i) < 0x007f ? 1 : 2;
-      }
-      return l;
-    },
+    function f() {
+    }
 
-    utf8len: function (s) {
-      var c, i, l = 0;
-      for (i = 0; i < s.length; i++) {
-        c = s.charCodeAt(i);
-        if (c < 0x007f)l++;
-        else if ((0x0080 <= c) && (c <= 0x07ff))l += 2;
-        else if ((0x0800 <= c) && (c <= 0xffff))l += 3;
-        else l += 4;
-      }
-      return l;
-    },
+    //f.__proto__ = {
+    //
+    //};
 
-    hasErr:function(o){
-      var no_err;
-      // first doing
-      no_err = lef.lenrangeHandle(o) && lef.regexpCheck(o);
-      //no_err = no_err && lef.regexpCheck(o);
-      return !no_err;
-    },
-    setErr:function(o){
-      $(o).addClass(lef.errTextBoxClass.replace(/[^\w\-]/g,''))
-    },
-    liftErr:function(o){
-      $(o).removeClass(lef.errTextBoxClass.replace(/[^\w\-]/g,''))
-    },
-    errHandle:function(o){
-     // console.log(lef.lenrangeHandle(o));
-      lef.hasErr(o) ? lef.setErr(o) : lef.liftErr(o);
-    },
+    f.prototype = {
+        autoStart: true,
+        /**
+         * Configurations
+         */
+        errTextBoxClass: '.data-lef-errtextbox',
+        errTipsClass: '.data-lef-errtip',
+        /**
+         * @return string default tip shows in the errTipsClass
+         */
+        defaultErrTip: function (s) {
+            return s + "错误";
+        },
+        htmlTags: [
+            ['—', '&#8212;'],
+            ['\'', '&#39;'],
+            ['\"', '&quot;'],
+            ['<', '&lt;'],
+            ['>', '&gt;'],
+            ['\\\\', '&#92;']
+        ],
+        data: {
+            toArray: function () {
+                return JSON.parse(data);
+            },
+            toData: function () {
+                return JSON.stringify(arr);
+            }
+        },
 
-    showErr:function(o, s){
-      var errshow =  $(o).dataLef('errshow');
-      s = s || $(o).dataLef('errtip') || lef.defaultErrTip($(o).attr('placeholder') || $(o).attr('name'));
-      if(errshow == 'off')
-        return;
-      if(!errshow){
-        if($(o).parents('form').find(lef.errTipsClass).length < 1)
-          $(o).parents('form').prepend('<p class="'+ lef.errTipsClass.replace(/[^\w\-]/g,'') +'" data-lef="temporary">'+ s +'</p>');
-        errshow = $(o).parents('form').find(lef.errTipsClass);
-      }
+        dataLefSelector: 'dataLefSelector',
 
-      if($(errshow).html().length < 1){
-        $(errshow).html(s);
-      }
+        isUsername: function (s) {
+            return /^[a-zA-Z\u4e00-\u9fa5][\u4e00-\u9fa5\w\-]+[a-zA-Z\u4e00-\u9fa5]$/.test(s);
+        },
+        isEmail: function (s) {
+            return /^[\w\-\.]+\@[\w\-]+(\.[a-z]+)+$/.test(s);
+        },
+        isPhone: function (s) {
+            return /^\d+$/.test(s);
+        },
 
-      $(errshow).hide(100).html(s).show(180);
-      $(o).focus();
-    },
+        regexpCheck: function (o) {
+            var reg = $(o).dataLef('regexp');
+            if (!reg) {
+                reg = $(o).dataLef('type');
+                if (reg && (reg = reg.match(/^number(\.?)(\d+)?$/))) {
+                    if (!reg[1])
+                        reg = '\\d+';
+                    else if (!reg[2])
+                        reg = '\\d+(\\.\\d*)?';
+                    else
+                        reg = '\\d+\\.\\d{' + reg[2] + '}';
+                }
+            }
+
+            //if(reg)console.log(reg + ' : ' + reg.replace(/\\/g,'\\\\') + ' : '+ $(o).val() +(reg ? RegExp('^'+reg+'$').test($(o).val()) : true))
+            return reg ? RegExp('^' + reg + '$').test($(o).val()) : true;
+        },
+
+        /**
+         * regexp --> data-lef-type  -- data-lef="type-"
+         * @return int -1 on string; 0 on int; >0 on the max decimal number, esp. Number.POSITIVE_INFINITY on a descimal,but unknown
+         */
+        getDecimalPlaces: function (o) {
+            var reg;
+            var max;
+            if (reg = $(o).dataLef('regexp')) {
+                // match(//g)[0] and match(//)[0]
+                if (reg = reg.match(/^(\\d[\+\{\d,\}]*)(\\?\.\\d[\+\{\d,\}]*)?$/)) {
+                    if (!reg[2])
+                        return 0;
+                    if ((max = regDecMax(reg[2])) > 0)
+                        return max;
+                    var len_max = lef.getLenrange(o)[1];
+                    if ((max = regDecMax(reg[1])) > 0 && len_max !== Number.POSITIVE_INFINITY)
+                        return len_max - max;
+                    return Number.POSITIVE_INFINITY;
+                }
+            }
+            //if(reg = $(o).dataLef('type')){
+            //  if(reg = reg.match(/^number(\.?)(\d+)?$/)){
+            //    if(!reg[1])
+            //      return 0;
+            //    if(!reg[2])
+            //      return Number.POSITIVE_INFINITY;
+            //    return parseInt(reg[2]);
+            //  }
+            //}
+            return -1;
+
+        },
+        isTypeNumber: function (o, o_reserve) {
+            return /^[\d\.]+$/.test($(o).val()) && (lef.getDecimalPlaces(o) > -1 || o_reserve && lef.getDecimalPlaces(o_reserve));
+        },
+        calc: function (o) {
+            var cc = $(o).dataLef('calc');
+            var nodes = cc.match(/\{\s*\#\s*([\w\-]+)\s*\}/g);       // match(//g)[0] and match(//)[0]
+            nodes = (nodes || []).concat(cc.match(/([\w\-]+)/g));      // match(//g)[0] and match(//)[0]
+            var once = [];
+            var cc2;
+            var err;
+            var v;
+            nodes.forEach(function (name) {
+                if (($.inArray(name, once) < 0) && $('input[name=' + name + ']').length == 1) {
+                    $('input[name=' + name + ']').on('input propertychange', function (e) {
+                        err = false;
+                        cc2 = cc;
+                        nodes.forEach(function (n) {
+                            if ($('input[name=' + n + ']').length == 1) {
+                                v = $('input[name=' + n + ']').val();
+                                if (lef.hasErr($('input[name=' + n + ']')) || (v.length < 1))
+                                    err = true;
+                                if (!lef.isTypeNumber($('input[name=' + n + ']'), $(o)))
+                                    v = '"' + v + '"';
+                                cc2 = cc2.replace(RegExp(n, 'g'), v);
+                                //console.log(cc2)
+                            }
+                        });
+                        v = $(this).val();
+                        if (!err && !lef.hasErr($(this)) && (v.length > 0))
+                            $(o).val(eval(cc2.replace(RegExp(name, 'g'), v)));
+
+                    });
+                    once.push(name);
+                }
+            });
+
+        },
+        /**
+         * @return int the placeholder length. a Chinese char's placelen is 2.
+         */
+        charlen: function (s) {
+            return s.length;
+        },
+        placelen: function (s) {
+            var l = 0;
+            for (var i = 0; i < s.length; ++i) {
+                l += s.charCodeAt(i) < 0x007f ? 1 : 2;
+            }
+            return l;
+        },
+
+        utf8len: function (s) {
+            var c, i, l = 0;
+            for (i = 0; i < s.length; i++) {
+                c = s.charCodeAt(i);
+                if (c < 0x007f)l++;
+                else if ((0x0080 <= c) && (c <= 0x07ff))l += 2;
+                else if ((0x0800 <= c) && (c <= 0xffff))l += 3;
+                else l += 4;
+            }
+            return l;
+        },
+
+        hasErr: function (o) {
+            var no_err;
+            // first doing
+            no_err = lef.lenrangeHandle(o) && lef.regexpCheck(o);
+            //no_err = no_err && lef.regexpCheck(o);
+            return !no_err;
+        },
+        setErr: function (o) {
+            $(o).addClass(lef.errTextBoxClass.replace(/[^\w\-]/g, ''))
+        },
+        liftErr: function (o) {
+            $(o).removeClass(lef.errTextBoxClass.replace(/[^\w\-]/g, ''))
+        },
+        errHandle: function (o) {
+            // console.log(lef.lenrangeHandle(o));
+            lef.hasErr(o) ? lef.setErr(o) : lef.liftErr(o);
+        },
+
+        showErr: function (o, s) {
+            var errshow = $(o).dataLef('errshow');
+            s = s || $(o).dataLef('errtip') || lef.defaultErrTip($(o).attr('placeholder') || $(o).attr('name'));
+            if (errshow == 'off')
+                return;
+            if (!errshow) {
+                if ($(o).parents('form').find(lef.errTipsClass).length < 1)
+                    $(o).parents('form').prepend('<p class="' + lef.errTipsClass.replace(/[^\w\-]/g, '') + '" data-lef="temporary">' + s + '</p>');
+                errshow = $(o).parents('form').find(lef.errTipsClass);
+            }
+
+            if ($(errshow).html().length < 1) {
+                $(errshow).html(s);
+            }
+
+            $(errshow).hide(100).html(s).show(180);
+            $(o).focus();
+        },
 
 
-    /**
-     * @return array [min, max];
-     */
-    getLenrange:function(o){
-      var range = $(o).dataLef('lenrange');
-      if(range){      // int|range
-        var e = range.replace(/\s/g, '').match(/^(\d+)?([^\d])?(\d+)?$/);   // match(//g)[0] and match(//)[0]
-        var r =[];
-        if(!e[2])
-          return [0, parseInt(e[1])];
-        r[0] = e[1] ? parseInt(e[1]) : 0;
-        r[1] = e[3] ? parseInt(e[3]) : Number.POSITIVE_INFINITY;
-        return r;
-      }
-      return [0, Number.POSITIVE_INFINITY];
-    },
+        /**
+         * @return array [min, max];
+         */
+        getLenrange: function (o) {
+            var range = $(o).dataLef('lenrange');
+            if (range) {      // int|range
+                var e = range.replace(/\s/g, '').match(/^(\d+)?([^\d])?(\d+)?$/);   // match(//g)[0] and match(//)[0]
+                var r = [];
+                if (!e[2])
+                    return [0, parseInt(e[1])];
+                r[0] = e[1] ? parseInt(e[1]) : 0;
+                r[1] = e[3] ? parseInt(e[3]) : Number.POSITIVE_INFINITY;
+                return r;
+            }
+            return [0, Number.POSITIVE_INFINITY];
+        },
 
-    /**
-     * It changes always, so it should combined handle actions with check
-     */
-    lenrangeHandle:function(o){
-      var len, rtn, lentype = $(o).dataLef('lentype');
-      var fn = !lentype ? 'utf8len' : (lentype + 'len');
-      if(lef.__proto__[fn])
-        len = lef[fn]($(o).val());
-      else{
-        console.log('dataLef.__proto__.'+ fn +'() is undefined...');
-        return false;
-      }
-      $(o).data('lef-len', len);
+        /**
+         * It changes always, so it should combined handle actions with check
+         */
+        lenrangeHandle: function (o) {
+            var len, rtn, lentype = $(o).dataLef('lentype');
+            var fn = !lentype ? 'utf8len' : (lentype + 'len');
+            if (lef.__proto__[fn])
+                len = lef[fn]($(o).val());
+            else {
+                console.log('dataLef.__proto__.' + fn + '() is undefined...');
+                return false;
+            }
+            $(o).data('lef-len', len);
 
-      var show_len = $(o).dataLef('showlen');
+            var show_len = $(o).dataLef('showlen');
 
-      // lef.lenrangeCheck(o);
-      if(show_len && len >0){
-        if(show_len == 'showlen')
-          show_len = $(o).parent().find('em');
-        $(show_len).html($(o).dataLef('len'));
-      }
-      var range = lef.getLenrange(o);
-      return !(len < range[0] || len > range[1]);
-    },
-
-
-
-    trim: function(o){
-      var s = $(o).val();
-      //if(!s)
-       // return;
-      var tm = $(o).dataLef('trim');
-      /**
-       * Default trim, using off to cancel below
-       *  1. trim the blanks at head and tail
-       *  2. combine 2 or more continued blanks into 1
-       *  3. replace html tags to urlencoded
-       *      htmltag to remove it instead of replacing
-       */
-      if(!tm){   // do default trim()
-        s = s.replace(/^[\s　]+|[\s　]+$/g, '');
-        s = s.replace(/\s+/g, ' ');
-        lef.htmlTags.forEach(function(x){
-          s = s.replace(RegExp(x[0], 'g'), x[1]);
-        });
-      }
-      if($(o).dataLef('trim', 'prune')){
-        s = s.replace(/[，,]+/g, ',');
-        s = s.replace(/([\s\-\+\.,])+/g, '$1');
-        s = s.replace(/^[,\s\-\+\.]+|[,\s\-\+\.]+$/g, '');
-        s = s.replace(/[^\u4E00-\u9FA5\w,\-\+\s\.]/g, '');
-      }
-      $(o).val(s);
-    },
+            // lef.lenrangeCheck(o);
+            if (show_len && len > 0) {
+                if (show_len == 'showlen')
+                    show_len = $(o).parent().find('em');
+                $(show_len).html($(o).dataLef('len'));
+            }
+            var range = lef.getLenrange(o);
+            return !(len < range[0] || len > range[1]);
+        },
 
 
-    /**
-     * @var flags
-     *  ""  show <option></option>
-     *  string selected key name
-     * @example
-     * {
+        trim: function (o) {
+            var s = $(o).val();
+            //if(!s)
+            // return;
+            var tm = $(o).dataLef('trim');
+            /**
+             * Default trim, using off to cancel below
+             *  1. trim the blanks at head and tail
+             *  2. combine 2 or more continued blanks into 1
+             *  3. replace html tags to urlencoded
+             *      htmltag to remove it instead of replacing
+             */
+            if (!tm) {   // do default trim()
+                s = s.replace(/^[\s　]+|[\s　]+$/g, '');
+                s = s.replace(/\s+/g, ' ');
+                lef.htmlTags.forEach(function (x) {
+                    s = s.replace(RegExp(x[0], 'g'), x[1]);
+                });
+            }
+            if ($(o).dataLef('trim', 'prune')) {
+                s = s.replace(/[，,]+/g, ',');
+                s = s.replace(/([\s\-\+\.,])+/g, '$1');
+                s = s.replace(/^[,\s\-\+\.]+|[,\s\-\+\.]+$/g, '');
+                s = s.replace(/[^\u4E00-\u9FA5\w,\-\+\s\.]/g, '');
+            }
+            $(o).val(s);
+        },
+
+
+        /**
+         * @var flags
+         *  ""  show <option></option>
+         *  string selected key name
+         * @example
+         * {
      *  vita:{
      *    "dataLefSelector":{"dataLef":"notnull"},
      *    "name":{"selected":"Lef"},
      *    "age":99,
      *  }
      * }
-     *    <select name = "vita" data-lef="notnull">
-     *      <option></option>
-     *      <option value="name" selected="selected">Lef</option>
-     *      <option value="age">99</option>
-     *    </select>
-     */
-    toSelector:function(select_name, arr){
-      var html = '<select name="'+ select_name+'"';
-      var info = arr[this.dataLefSelector];
-      if(info){
-        if(info.dataLef)
-          html += 'data-lef="'+ info.dataLef +'"';
-        arr[this.dataLefSelector] = null;
-      }
-      html += '>';
+         *    <select name = "vita" data-lef="notnull">
+         *      <option></option>
+         *      <option value="name" selected="selected">Lef</option>
+         *      <option value="age">99</option>
+         *    </select>
+         */
+        toSelector: function (select_name, arr) {
+            var html = '<select name="' + select_name + '"';
+            var info = arr[this.dataLefSelector];
+            if (info) {
+                if (info.dataLef)
+                    html += 'data-lef="' + info.dataLef + '"';
+                arr[this.dataLefSelector] = null;
+            }
+            html += '>';
 
-      for(var i=0; i<arr.length; ++i){
-        if(arr[i]){
-          html += '<option value="' + i + '"';
-          if(arr[i].selected)
-            html += ' selected="selected">' + arr[i].selected;
-          else
-            html += '>' + arr[i];
-          html += '</option>';
+            for (var i = 0; i < arr.length; ++i) {
+                if (arr[i]) {
+                    html += '<option value="' + i + '"';
+                    if (arr[i].selected)
+                        html += ' selected="selected">' + arr[i].selected;
+                    else
+                        html += '>' + arr[i];
+                    html += '</option>';
+                }
+            }
+
+            return '</select>';
+        },
+        /**
+         * Modify a line of data
+         * @arg jQuery-Object tr
+         */
+        beforeModify: function (tr) {
+            $(tr).find('td').each(function (i, td) {
+                var input = '<input type="text"';
+                input += 'value="';
+                input += $(td).dataLef('name') ? $(td).dataLef('name') : $(td).html()
+                input += '"';
+
+                if ($(td).dataLef('readonly'))
+                    input += 'readonly="readonly"';
+                if ($(td).dataLef('name'))
+                    input += 'name="' + $(td).dataLef('name') + '"';
+
+                input += '>';
+                $(td).html(input);
+            });
+        },
+
+        afterModify: function (tr) {
+            $(tr).find('td').each(function (i, td) {
+                $(td).html($(td).children().val());
+            });
+        },
+
+
+        beforeSubmit: function (o, e) {
+            var r = true;  // 用于返回，让提交按钮后面代码停止执行
+            if (!$(o).is('form'))
+                o = $(o).parents('form');
+            $(o).find(lef.errTipsClass).hide(180);
+            $(o).find('input[type!=submit], select, textarea').each(function (i, textbox) {
+                if ($(textbox).dataLef('submit'))
+                    return true;    // continue to next loop
+                lef.trim($(textbox));
+                lef.errHandle($(textbox));
+                if (lef.hasErr($(textbox))) {
+                    e && e.preventDefault();// prevent submit
+                    lef.showErr($(textbox));
+                    r = false;
+                    return r; // break each input/select/textarea
+                }
+            });
+            return r;
+        },
+        afterSubmit: function (o) {
+
+        },
+        init: function (data_lef) {
+            lef = data_lef;
+            console.log('Not Finish Yet...');
+            var nodes = 'input:text, input:password, textarea';
+
+            $(nodes).on('input propertychange', function () {
+                lef.errHandle(this);
+            });
+
+
+            $(nodes).on('blur', function () {
+                lef.trim(this);
+                lef.errHandle(this);
+            });
+
+            $('form').submit(function (e) {
+                lef.beforeSubmit($(this).first(), e);
+            });
+
+            $('body *').each(function () {
+                var method;
+                if (method = $(this).dataLef('submit')) {
+                    if (method == 'submit')
+                        method = 'click';
+                    $(this).on(method, function (e) {
+                        //console.log(method)
+                        lef.beforeSubmit(this, e)
+                    });
+                }
+                if (method = $(this).dataLef('calc')) {
+                    lef.calc(this);
+                }
+            });
         }
-      }
 
-      return '</select>';
-    },
-    /**
-     * Modify a line of data
-     * @arg jQuery-Object tr
-     */
-    beforeModify:function(tr){
-      $(tr).find('td').each(function(i, td){
-        var input = '<input type="text"';
-        input += 'value="';
-        input += $(td).dataLef('name') ? $(td).dataLef('name') : $(td).html()
-        input += '"';
+    };
 
-        if($(td).dataLef('readonly'))
-          input += 'readonly="readonly"';
-        if($(td).dataLef('name'))
-          input += 'name="'+ $(td).dataLef('name') +'"';
-
-        input += '>';
-        $(td).html(input);
-      });
-    },
-
-    afterModify:function(tr){
-      $(tr).find('td').each(function(i, td){
-        $(td).html($(td).children().val());
-      });
-    },
-
-
-    beforeSubmit:function(o, e){
-      var r = true;  // 用于返回，让提交按钮后面代码停止执行
-      if(!$(o).is('form'))
-        o = $(o).parents('form');
-      $(o).find(lef.errTipsClass).hide(180);
-      $(o).find('input[type!=submit], select, textarea').each(function (i, textbox) {
-        if($(textbox).dataLef('submit'))
-          return true;    // continue to next loop
-        lef.trim($(textbox));
-        lef.errHandle($(textbox));
-        if(lef.hasErr($(textbox))){
-          e && e.preventDefault();// prevent submit
-          lef.showErr($(textbox));
-          r=false;
-          return r; // break each input/select/textarea
-        }
-      });
-      return r;
-    },
-    afterSubmit:function(o){
-
-    },
-    init:function(data_lef){
-      lef = data_lef;
-      console.log('Not Finish Yet...');
-      var nodes = 'input:text, input:password, textarea';
-
-      $(nodes).bind('input propertychange', function () {
-        lef.errHandle(this);
-      });
-
-
-      $(nodes).blur(function () {
-        lef.trim(this);
-        lef.errHandle(this);
-      });
-
-      $('form').submit(function (e) {
-        lef.beforeSubmit($(this).first(), e);
-      });
-
-      $('body *').each(function(){
-        var method;
-        if(method = $(this).dataLef('submit')){
-          if(method == 'submit')
-            method = 'click';
-          $(this).bind(method,function(e){
-            //console.log(method)
-            lef.beforeSubmit(this, e)
-          });
-        }
-        if(method = $(this).dataLef('calc')){
-          lef.calc(this);
-        }
-      });
-    }
-
-  };
-
-  //if(typeof(window.dataLef) != 'function')
+    //if(typeof(window.dataLef) != 'function')
     window.dataLef = new f();
-  $(document).ready(function(){
-    window.dataLef.autoStart && window.dataLef.init(window.dataLef);
-  });
+    $(document).ready(function () {
+        window.dataLef.autoStart && window.dataLef.init(window.dataLef);
+    });
 })();
