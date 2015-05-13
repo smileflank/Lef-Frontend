@@ -1,107 +1,133 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-  <meta charset="UTF-8">
-  <title>data-lef Data/Form Mangement Demo</title>
-  <link href="../asserts/lef.css" type="text/css" rel="stylesheet">
-  <style>
+    <meta charset="UTF-8">
+    <title>data-lef Data/Form Mangement Demo</title>
+    <link href="../asserts/lef.css" type="text/css" rel="stylesheet">
+    <style>
 
-    .data-lef-errtextbox{background:#ebf}
-    .data-lef-errtip{display:none}
+        .data-lef-errtextbox {
+            background: #ebf
+        }
 
-    input{}
-    .short-textbox{width:40px}
-    .no-border-textbox{width:99px;border:0}
-  </style>
-  <script src="../asserts/jquery-2.1.3.js"></script>
-  <script src="data-lef.js"></script>
+        .data-lef-errtip {
+            display: none
+        }
+
+        input {
+        }
+
+        .short-textbox {
+            width: 40px
+        }
+
+        .no-border-textbox {
+            width: 99px;
+            border: 0
+        }
+    </style>
+    <script src="../asserts/jquery-2.1.3.js"></script>
+    <script src="data-lef.js"></script>
 </head>
 <body>
 <div class="w">
-  <div style="height:80px;margin:20px 0" class="fo">
-    <h1>data-lef has not been finished yet...</h1>
+    <div style="height:80px;margin:20px 0" class="fo">
+        <h1>data-lef has not been finished yet...</h1>
 
-    <p>
-      <a href="https://github.com/lefwell/Lef-Frontend/tree/master/data-lef" target="_blank"> data-lef source code and how to use data-lef (源码及使用方法)</a>
-    </p>
-  </div>
-  <div>
-<div class="p">
-  <h1>Use I. HTML Form Management</h1>
-  <form>
-    <!--<div class="data-lef-errtip"></div>-->
-    <div>
-      <input type="text" name="factor1" class="short-textbox" data-lef="type-number.">
-      +
-      <input type="text" name="factor2" class="short-textbox" data-lef-regexp="\d+">
-      / 100
-      =
-      <input type="text" name="factor_result" class="" data-lef="type-number" data-lef-calc="(factor1 + factor2) / 100" data-lef-type="number.2">
+        <p>
+            <a href="https://github.com/lefwell/Lef-Frontend/tree/master/data-lef" target="_blank"> data-lef source code
+                and how to use data-lef (源码及使用方法)</a>
+        </p>
     </div>
     <div>
-      <input type="text" name="age" placeholder="Age" data-lef="" data-lef-regexp="\d+">
-    </div>
-    <div>
-      <input type="text" name="firstname" class="short-textbox" placeholder="First Name" data-lef-errtip="Can't you even spell your first name?" data-lef-lenrange="2-9">
-      <input type="text" name="lastname" class="short-textbox" placeholder="Last Name" data-lef-errtip="Your last name, please..." data-lef-lenrange="2-9">
-      <input type="text" name="fullname" readonly="readonly" class="no-border-textbox" placeholder="Full Name" data-lef="" data-lef-calc="firstname + ' ' +lastname">
-    </div>
-    <div>
-      <input type="text" name="user" data-lef="" data-lef-showlen=".username_len" data-lef-lenrange="6-14" placeholder="Username">
-      <em>* Please input 6 to 14 chars</em>
-    </div>
-    <div><input type="password" name="password" data-lef="" placeholder="Password"></div>
-    <div>
-      <textarea data-lef="showlen lentype-place" name="text"></textarea>
-      <em></em>
-    </div>
-    <div>
-      <p><em>there're 3 ways to submit with buttons below:</em></p>
-      <p>1. click the submit </p>
-      <p>2. click the button </p>
-      <p>1. mouseover the image Lef-Well </p>
-      <input type="submit" vaLue="submit">
-      <input type="button" value="button to submit" data-lef="submit">
-      <img src="https://avatars1.githubusercontent.com/u/8835297?v=3&s=100" data-lef-submit="mouseover" data-lef-errshow="off" alt="mouseover the img to submit">
-    </div>
+        <div class="p">
+            <h1>Use I. HTML Form Management</h1>
 
-    Count Username Here：<em class="username_len"></em>
-  </form>
-</div>
-  <div class="q">
-    <h1>Use II. Light SQL Management</h1>
-    <p>
-      Please double click a line of data to modify it to SQL (not finish yet)
-    </p>
-    <p>
-      Here is just a sample. You should create the data with SQL script (such as PHP/JSP and so on)
-    </p>
-      <table>
-        <thead>
-        <tr>
-          <th>ID</th>
-          <th>Full Name</th>
-          <th>User Name</th>
-          <th>Gender</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td data-lef="unique-row" data-lef-name="id" data-lef-regexp="\d">1000</td>
-          <td data-lef-name="name" data-lef-lenrange="2-99">Lef Well</td>
-          <td data-lef="" data-lef-name="user" data-lef-lenrange="6-14">LefWell</td>
-          <td data-lef="" data-lef-name="sex">Male</td>
-        </tr>
-        <tr>
-          <td data-lef="unique-row" data-lef-name="id" data-lef-regexp="\d">999</td>
-          <td data-lef-name="name" data-lef-lenrange="2-99">VW</td>
-          <td data-lef="" data-lef-name="user" data-lef-lenrange="6-14">VinceWell</td>
-          <td data-lef="" data-lef-name="sex">Male</td>
-        </tr>
-        </tbody>
-      </table>
-  </div>
-  </div>
+            <form>
+                <!--<div class="data-lef-errtip"></div>-->
+                <div>
+                    <input type="text" name="factor1" class="short-textbox" data-lef="type-number.">
+                    +
+                    <input type="text" name="factor2" class="short-textbox" data-lef-regexp="\d+">
+                    / 100
+                    =
+                    <input type="text" name="factor_result" class="" data-lef="type-number"
+                           data-lef-calc="(factor1 + factor2) / 100" data-lef-type="number.2">
+                </div>
+                <div>
+                    <input type="text" name="age" placeholder="Age" data-lef="" data-lef-regexp="\d+">
+                </div>
+                <div>
+                    <input type="text" name="firstname" class="short-textbox" placeholder="First Name"
+                           data-lef-errtip="Can't you even spell your first name?" data-lef-lenrange="2-9">
+                    <input type="text" name="lastname" class="short-textbox" placeholder="Last Name"
+                           data-lef-errtip="Your last name, please..." data-lef-lenrange="2-9">
+                    <input type="text" name="fullname" readonly="readonly" class="no-border-textbox"
+                           placeholder="Full Name" data-lef="" data-lef-calc="firstname + ' ' +lastname">
+                </div>
+                <div>
+                    <input type="text" name="user" data-lef="" data-lef-showlen=".username_len" data-lef-lenrange="6-14"
+                           placeholder="Username">
+                    <em>* Please input 6 to 14 chars</em>
+                </div>
+                <div><input type="password" name="password" data-lef="" placeholder="Password"></div>
+                <div>
+                    <textarea data-lef="showlen lentype-place" name="text"></textarea>
+                    <em></em>
+                </div>
+                <div>
+                    <p><em>there're 3 ways to submit with buttons below:</em></p>
+
+                    <p>1. click the submit </p>
+
+                    <p>2. click the button </p>
+
+                    <p>1. mouseover the image Lef-Well </p>
+                    <input type="submit" vaLue="submit">
+                    <input type="button" value="button to submit" data-lef="submit">
+                    <img src="https://avatars1.githubusercontent.com/u/8835297?v=3&s=100" data-lef-submit="mouseover"
+                         data-lef-errshow="off" alt="mouseover the img to submit">
+                </div>
+
+                Count Username Here：<em class="username_len"></em>
+            </form>
+        </div>
+        <div class="q">
+            <h1>Use II. Light SQL Management</h1>
+
+            <p>
+                Please double click a line of data to modify it to SQL (not finish yet)
+            </p>
+
+            <p>
+                Here is just a sample. You should create the data with SQL script (such as PHP/JSP and so on)
+            </p>
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Full Name</th>
+                    <th>User Name</th>
+                    <th>Gender</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td data-lef="unique-row" data-lef-name="id" data-lef-regexp="\d">1000</td>
+                    <td data-lef-name="name" data-lef-lenrange="2-99">Lef Well</td>
+                    <td data-lef="" data-lef-name="user" data-lef-lenrange="6-14">LefWell</td>
+                    <td data-lef="" data-lef-name="sex">Male</td>
+                </tr>
+                <tr>
+                    <td data-lef="unique-row" data-lef-name="id" data-lef-regexp="\d">999</td>
+                    <td data-lef-name="name" data-lef-lenrange="2-99">VW</td>
+                    <td data-lef="" data-lef-name="user" data-lef-lenrange="6-14">VinceWell</td>
+                    <td data-lef="" data-lef-name="sex">Male</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 </body>
 </html>
