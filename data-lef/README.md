@@ -1,6 +1,11 @@
+> 敬请您先会使用data-lef，然后再给我一个更好的建议 —— 请不要把data-lef跟其他API比较，除非您真的会用data-lef。也许data-lef源码不佳，但是请不要否认 data-lef 的设计思路。
+
+> Please give me some advices after KNOWING HOW TO USE data-lef. data-lef is different with other APIs. The code may not be good, but the design must be not bad.
+
+
 # data-lef (Lef Form/Data Management API)
 
-data-lef is light html form and sql data management JS API. **It's use for decouple**. 
+data-lef is a light html form and sql data management JS API. **It's use for decouple**. 
 It has not been finished yet. It will be really helpful for web developers.
 
 data-lef 是一款**以解耦为目的**、轻量级的：HTML表单及数据库管理JS插件，目的是将大量重复的表单验证、数据库后台管理的功能解耦成独立的JS插件。data-lef 是根据我以前实际作业经验而总结的一套方案，暂时还未完成，但是相信完成后，其作用一定是非常广泛的。
@@ -63,11 +68,11 @@ showlen-.name_length errshow-#name_err" data-lef-errtip="你连名字都不会�
 
 为了HTML代码的美观性，data-lef提供了两种等价表达方式，一种是 data-lef="属性-值" 一种是 data-lef-属性="值"，这是等价的，举个例子：
 
-data-lef="showlen calc-(100+300)*40 regexp-\d+ lenrange-2-5"
+data-lef="showlen calc-({#price}+300)*40 regexp-\d+ lenrange-2-5"
 
 等价于
 
-data-lef-showlen="showlen" data-lef-calc="(100+300)*40" data-lef-regexp="\d+" data-lef-lengrange="2-5"
+data-lef-showlen="showlen" data-lef-calc="({#price}+300)*40" data-lef-regexp="\d+" data-lef-lengrange="2-5"
 
 当然，如果属性值有空格的，那么就不能使用 data-lef=""表示了。
 
@@ -131,11 +136,20 @@ data-lef-showlen="showlen" data-lef-calc="(100+300)*40" data-lef-regexp="\d+" da
 
  data-lef-temporary
 
+## Calculate 自动计算功能
+
+你可以使用 {#name} 或者直接使用 name 来表示一个 name="name" 其他文本框，之后当前
+文本框就可以自动计算出相应的结果：
+
+data-lef-cal="50 * ({#price} + 300) - 10" 
+
+data-lef-cal="50 * (price + 300) - 10" 
 
 
 ## Regular Expression 正则表达
 
 data-lef 中，正则表达具有最高的优先级，如果匹配规则冲突，会优先判定正则规则是否正确。比如设置只能输入两位小数：
+
 你可以使用下面三种方法之一：
 
 &lt;input type="text" data-lef="type-number.2"&gt;
@@ -155,18 +169,28 @@ window.dataLef.errTipsClass = '.errInputBox';
 window.dataLef.errTextBoxClass = '.errShow';
 
 window.dataLef.data = function(){     // 如果想换种数据格式，比如protobuf等
+
   toArray:function(data){
+  
      return protobufToArray(data);
+     
   },
+  
   toData: function(arr){
+  
     return arrayToProtobuf(arr)
+    
   }
+  
 }
 ...
 
 // 如果想要手动启动dataLef，只需要：
+
 window.dataLef.autoStart = false;
+
 // 之后在你想要启动的地方使用 dataLef.init() 就可以了
+
 window.dataLef.init();
 
 &lt;/script&gt;
