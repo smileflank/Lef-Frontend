@@ -261,7 +261,7 @@
       var v;
       nodes.forEach(function(name){
         if(($.inArray(name, once) < 0) && $('input[name='+name+']').length == 1){
-          $('input[name='+name+']').bind('input propertychange', function(e){
+          $('input[name='+name+']').on('input propertychange', function(e){
               err = false;
               cc2 = cc;
               nodes.forEach(function(n) {
@@ -519,12 +519,12 @@
       console.log('Not Finish Yet...');
       var nodes = 'input:text, input:password, textarea';
 
-      $(nodes).bind('input propertychange', function () {
+      $(nodes).on('input propertychange', function () {
         lef.errHandle(this);
       });
 
 
-      $(nodes).blur(function () {
+      $(nodes).on('blur', function () {
         lef.trim(this);
         lef.errHandle(this);
       });
@@ -538,7 +538,7 @@
         if(method = $(this).dataLef('submit')){
           if(method == 'submit')
             method = 'click';
-          $(this).bind(method,function(e){
+          $(this).on(method, function(e){
             //console.log(method)
             lef.beforeSubmit(this, e)
           });
